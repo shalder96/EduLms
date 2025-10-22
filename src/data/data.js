@@ -3,6 +3,9 @@ export const coursesData = [
     id: 1,
     title: "Artificial Intelligence",
     description: "Learn AI from scratch and be prepared for Board Examination",
+    introduction: `
+    The CBSE Class 10 Artificial Intelligence curriculum introduces students to the fundamentals of AI, focusing on real-world applications and hands-on learning. It covers key topics such as AI concepts and history, data handling, machine learning basics, and natural language processing. Students also explore AI tools like Python, NumPy, and Pandas while learning about ethics, bias, and responsible AI use. The syllabus encourages creativity through projects like chatbots, predictive models, and AI-powered games. This early exposure builds computational thinking, problem-solving, and analytical skills. With AI driving innovation in industries like healthcare, education, and automation, students gain a strong foundation for future careers in data science, robotics, and software development. The curriculum not only sparks curiosity but also prepares learners for advanced studies in computer science and emerging technologies, empowering them for the digital future.
+    `,
     instructor: "",
     image: "https://m.media-amazon.com/images/I/71druzjLO8L.jpg",
     class: "Class 10",

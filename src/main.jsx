@@ -15,6 +15,7 @@ const Contact = lazy(() => import('./pages/Contact'))
 const Courses = lazy(() => import('./pages/courses/Courses'))
 const CourseDetail = lazy(() => import('./pages/courses/CourseDetail'))
 const CourseContent = lazy(() => import('./pages/courses/CourseContent'))
+const Dashboard = lazy(() => import('./pages/Dashboard'))
 
 
 const router = createBrowserRouter(
@@ -26,6 +27,7 @@ const router = createBrowserRouter(
         <Route path='courses/:id' element={<CourseDetail />} />
         <Route path='courses/:id/start' element={<CourseContent />} />
         <Route path='contact' element={<Contact />} />
+        <Route path='dashboard' element={<Dashboard />} />
       </Route>
       <Route path='*' element={<ErrorPage />} />
     </>

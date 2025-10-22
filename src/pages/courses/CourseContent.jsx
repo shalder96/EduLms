@@ -1,14 +1,34 @@
 import React, { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams} from "react-router-dom";
 import { coursesData } from "../../data/data";
 import Quiz from "./Quiz";
 import { class10AIQuizData } from "../../data/aiqna";
+import AIImage from "../../assets/AIImage.png"
+import {
+  Box,
+  Button,
+  Typography,
+  Breadcrumbs,
+  Link,
+  Grid,
+  Paper,
+  LinearProgress,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+} from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { IoPlayCircleOutline } from "react-icons/io5";
 
 
 const CourseContent = () => {
   const { id } = useParams();
   const course = coursesData.find((c) => c.id === parseInt(id));
   const lessons = course.lessons;
+   if (!course || !lessons || (!lessons.partA && !lessons.partB)) {
+
+    return (<p className="mt-10 text-center text-white">Course not found!</p>);
+  }
   const allLessons = [...(lessons.partA || []), ...(lessons.partB || [])];
 
 
@@ -35,18 +55,15 @@ const CourseContent = () => {
     );
   }, [currentLessonIndex, id, allLessons.length]);
 
-  if (!course || !lessons || (!lessons.partA && !lessons.partB)) {
-
-    return <p className="mt-10 text-center text-white">Course not found!</p>;
-  }
+ 
 
   const currentLesson = allLessons[currentLessonIndex];
 
   const handleNext = () => {
-    if (currentLessonIndex < allLessons.length - 1) {
-      setCurrentLessonIndex(currentLessonIndex + 1);
-    }
-  };
+      if (currentLessonIndex < allLessons.length - 1) {
+        setCurrentLessonIndex(currentLessonIndex + 1);
+      }
+    };
 
   const handlePrevious = () => {
     if (currentLessonIndex > 0) {
@@ -55,112 +72,325 @@ const CourseContent = () => {
   };
   
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-[#0F1B2A] via-[#1A2C42] to-[#0F1B2A] text-white pt-16 pb-10">
-      <div className="w-full max-w-6xl gap-6 px-4 mx-auto space-y-6 lg:flex-grow sm:px-6">
+    <Box 
+      sx={{
+        minHeight: "100vh",
+        position: "relative",
+        color: "white",
+        py: 10,
+        background: "linear-gradient(to bottom right, #177E89, #3B5B8C, #533A71)",
+      }}
+    >
+      {/* Overlay */}
+      <Box
+        sx={{
+          position: "absolute",
+          inset: 0,
+          bgcolor: "rgba(0,0,0,0.4)",
+          zIndex: 0,
+        }}
+      />
+      
+      {/* Main Content Start From Here  */}
+      <Box 
+        sx={{
+          maxWidth: "1200px", 
+          mx: "auto", 
+          px: { xs: 2, sm: 4 }, 
+          position: "relative",
+          zIndex: 1,
+        }}
+      >
+          
          {/* Breadcrumb */}
-        <div className="mb-4 text-sm text-gray-400">
-          <Link to="/courses" className="hover:text-[#A6E1FA]">
+        <Breadcrumbs 
+          sx={{color: "gray", mb: 2, fontSize: "0.9rem" }}
+          separator=">"
+        >
+          <Link href="/courses" color="inherit" underline="hover">
             Courses
-          </Link>{" "}
-          &gt;{" "}
-          <Link to={`/courses/${course.id}`} className="hover:text-[#A6E1FA]">
+          </Link>
+          
+          <Link 
+            href={`/courses/${course.id}`}
+            underline="hover"
+            sx={{ color: "#A6E1FA"}}
+          >
             {course.title}
-          </Link>{" "}
-          &gt; <span className="text-[#A6E1FA]">{currentLesson.title}</span>
-        </div>
+          </Link>
+          <Typography color="#A6E1FA">{currentLesson.title}</Typography>
+        </Breadcrumbs>
 
 
         {/* Header */}
-        <div className="p-6 mx-auto shadow-lg bg-white/10 backdrop-blur-md rounded-2xl">
-          <h1 className="mb-2 text-3xl font-bold">{course.title}</h1>
-          <p className="mb-6 text-gray-300">
+        <Paper 
+          elevation={6}
+          sx={{
+            background: "black",
+            backgroundImage: `url(${AIImage})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+            WebkitBackdropFilter: "blur(20px) saturate(180%)", // for Safari
+            borderRadius: "20px",
+            p: { xs: 2, sm: 4 }, 
+            mb: 6,
+            border: "1px solid rgba(255, 255, 255, 0.2)",
+            color: "white",
+          }}
+        >
+          <Typography variant="h4" fontWeight={700}>
+            {course.title}
+          </Typography>
+          
+          <Typography variant="body1" sx={{ color: "gray.300", mb: 3 }}>
             Instructor: {course.instructor || "N/A"}
-          </p>
+          </Typography>
 
           {/* Progress Bar */}
-          <div className="w-full h-4 mb-4 rounded-full bg-white/20">
-            <div
-              className="bg-gradient-to-r from-[#177E89] via-[#3D5A80] to-[#533A71] h-4 rounded-full transition-all duration-500"
-              style={{ width: `${progress}%` }}
-            ></div>
-          </div>
-          <p className="text-sm text-gray-300">{Math.round(progress)}% Completed</p>
-        </div>
+          <Box sx={{ mb: 1 }}>
+            <LinearProgress
+              variant="determinate"
+              value={progress}
+              sx={{
+                height: 8,
+                borderRadius: 5,
+                backgroundColor: "rgba(255,255,255,0.2)",
+                "& .MuiLinearProgress-bar": {
+                  background:
+                    "linear-gradient(to right, #177E89, #3D5A80, #533A71)",
+                },
+              }}
+            />
+          </Box>
+          <Typography variant="body2" sx={{ color: "gray.300" }}>
+            {Math.round(progress)}% Completed
+          </Typography>
+        </Paper>
 
         {/* Main Content */}
-        <div className="min-h-screen bg-gradient-to-b from-[#0F1B2A] via-[#142C42] to-[#0F1B2A] text-white">
-          <div className="flex flex-col-reverse w-full gap-6 mx-auto max-w-7xl lg:flex-row">
-            
+        <Grid container spacing={3} >
             {/* Left: Video + Notes + Quiz */}
-            <div className="flex-1 p-6 shadow-lg bg-white/10 rounded-2xl backdrop-blur-md">
-              <h2 className="mb-4 text-2xl font-semibold">
-                {currentLesson.title}
-              </h2>
+            <Grid item xs={12} md={8} lg={8} size="grow" >
+              <Paper
+                elevation={6}
+                sx={{
+                  background: "rgba(255, 255, 255, 0.1)",
+                  backdropFilter: "blur(20px) saturate(180%)",
+                  WebkitBackdropFilter: "blur(20px) saturate(180%)", // for Safari
+                  borderRadius: "20px",
+                  border: "1px solid rgba(255, 255, 255, 0.2)",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 4,
+                  p: { xs: 2, md: 4 },
+                }}
+              >
+                {/* LESSON TITLE  */}
+                <Typography variant="h5" fontWeight={600}>
+                  {currentLesson.title}
+                </Typography>
+              
 
-              {/* Video Box */}
-              <div className="flex items-center justify-center mb-6 text-3xl rounded-lg sm:2xl aspect-video bg-black/40">
-                {currentLesson.video}
-              </div>
+                {/* Video Box */}
+                <Box
+                  sx={{
+                    aspectRatio: "16/9",
+                    backgroundColor: "rgba(0,0,0,0.4)",
+                    borderRadius: 2,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "1.5rem",
+                  }}
+                >
+                  {currentLesson.video && (
+                    <video src={currentLesson.video} controls style={{ width: "100%", borderRadius: 8 }} />
+                  )}
+                </Box>
 
-              {/* Notes */}
-              <h3 className="text-lg font-semibold mb-2 text-[#A6E1FA]">
-                📒 Lesson Notes
-              </h3>
-              <p className="mb-6 text-gray-300">{currentLesson.notes}</p>
+                {/* Notes */}
+                <Box>
+                  <Typography
+                    variant="h6"
+                    sx={{ color: "#A6E1FA", fontWeight: 600, mb: 1, display: "flex", alignItems: "center", gap: 3 }}
+                  >
+                    📒 Lesson Notes <IoPlayCircleOutline />
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: "gray.300"}}>
+                    {currentLesson.notes}
+                  </Typography>
+                </Box>
 
-              {/* Quiz */}
-              <div className="overflow-hidden rounded-lg">
-                <h4 className="font-semibold text-[#A6E1FA] mb-2 text-lg ">🧠 Quick Quiz</h4>
-                <Quiz
-                  quizTitle={`Quiz on ${currentLesson.title}`}
-                  questions={class10AIQuizData}
-                />
-              </div>
-            </div>
+                {/* Quiz */}
+                <Box>
+                  <Typography
+                    variant="h6"
+                    sx={{ color: "#A6E1FA", fontWeight: 600, mb: 1, display: "flex", alignItems: "center", gap: 3 }}
+                  >
+                    🧠 Quick Quiz <IoPlayCircleOutline />
+                  </Typography>
+                  <Quiz
+                    quizTitle={`Quiz on ${currentLesson.title}`}
+                    questions={class10AIQuizData}
+                  />
+                </Box>
+
+                  {/* Navigation Buttons  */}
+                <Box 
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  {/* Previous Button */}
+                  <Button
+                    variant="contained"
+                    onClick={handlePrevious}
+                    disabled={currentLessonIndex === 0}
+                    sx={{
+                      backgroundColor: "rgba(255,255,255,0.2)",
+                      color: "white",
+                      "&:hover": {
+                        backgroundColor: "rgba(255,255,255,0.3)",
+                      },
+                    }}
+                  >
+                    ⬅ Previous
+                  </Button>
+
+                  {/* Next Button */}
+                  <Button
+                    variant="contained"
+                    onClick={handleNext}
+                    disabled={currentLessonIndex === allLessons.length - 1}
+                    sx={{
+                      background: "linear-gradient(to right, #177E89, #3D5A80, #533A71)",
+                      color: "white",
+                      "&:hover": {
+                        opacity: 0.9,
+                      },
+                    }}
+                  >
+                    Next ➡
+                  </Button>
+                </Box>
+              </Paper>
+            </Grid>
 
             {/* Right: Lesson List */}
-            <div className="w-full p-6 shadow-lg lg:w-1/3 bg-white/10 rounded-2xl backdrop-blur-md">
-              <h3 className="mb-4 text-xl font-semibold">📚 Course Lessons</h3>
+            <Grid item xs={12} md={4} lg={4}>
+              <Paper
+                elevation={6}
+                sx={{
+                  background: "rgba(255, 255, 255, 0.1)",
+                  backdropFilter: "blur(20px) saturate(180%)",
+                  WebkitBackdropFilter: "blur(20px) saturate(180%)", // for Safari
+                  borderRadius: "20px",
+                  border: "1px solid rgba(255, 255, 255, 0.2)",
+                  boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.37)",
+                  display: "flex",
+                  flexDirection: "column",
+                  p: { xs: 2, md: 4 },
+                }}
+              >
 
-              <h3 className="mb-2 font-semibold text-gray-300">Part A</h3>
-              <ul className="space-y-3">
+                <Typography variant="h6" fontWeight={600} mb={2} sx={{color:"#A6E1FA",}}>
+                  📚 Course Lessons
+                </Typography>
+
+                {/* Part A  */}
+                <Typography
+                  variant="subtitle1"
+                  sx={{ color: "gray.300", fontWeight: 500, mb: 1 , display: "flex", alignItems: "center", gap: 3}}
+                >
+                  Part A <IoPlayCircleOutline />
+                </Typography>
                 {lessons.partA.map((lesson, index) => (
-                  <li
+                  <Accordion
                     key={index}
-                    onClick={() => setCurrentLessonIndex(index)}
-                    className={`cursor-pointer px-4 py-2 rounded-lg transition ${
+                    
+                    expanded={index === currentLessonIndex}
+                    sx={{
+                      backgroundColor:
                       index === currentLessonIndex
-                        ? "bg-gradient-to-r from-[#177E89] to-[#533A71] text-white font-semibold"
-                        : "hover:bg-white/20 text-gray-300"
-                    }`}
+                        ? "rgba(255,255,255,0.15)"
+                        : "transparent",
+                      color: "white",
+                      borderRadius: 2,
+                      mb: 1,
+                      "&:before": { display: "none" },
+                      "&:hover": { backgroundColor: "rgba(255,255,255,0.08)" },
+                    }}
                   >
-                    {index + 1}. {lesson.title}
-                  </li>
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon sx={{ color: "white" }} />}
+                      onClick={() => setCurrentLessonIndex(index)}
+                    >
+                      <Typography>
+                        {index + 1}. {lesson.title}
+                      </Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      <Typography
+                        variant="body2"
+                        sx={{ color: "gray.300", lineHeight: 1.6 }}
+                      >
+                        {lesson.description || "Click to view lesson content."}
+                      </Typography>
+                    </AccordionDetails>
+                  </Accordion>
                 ))}
-              </ul>
 
-              <h3 className="mt-6 mb-2 font-semibold text-gray-300">Part B</h3>
-              <ul className="space-y-3">
-                {lessons.partB.map((lesson, index) => (
-                  <li
-                    key={index + lessons.partA.length}
-                    onClick={() => setCurrentLessonIndex(index + lessons.partA.length)}
-                    className={`cursor-pointer px-4 py-2 rounded-lg transition ${
-                      index + lessons.partA.length === currentLessonIndex
-                        ? "bg-gradient-to-r from-[#177E89] to-[#533A71] text-white font-semibold"
-                        : "hover:bg-white/20 text-gray-300"
-                    }`}
-                  >
-                    {index + 1 + lessons.partA.length}. {lesson.title}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
+                {/* Part B  */}
+                <Typography
+                  variant="subtitle1"
+                  sx={{ color: "gray.300", fontWeight: 500, mb: 1, display: "flex", alignItems: "center", gap: 3 }}
+                >
+                  Part B <IoPlayCircleOutline />
+                </Typography>
+                {lessons.partB.map((lesson, index) => {
+                  const lessonIndex = index + lessons.partA.length; // offset
+                  return (
+                    <Accordion
+                      key={lessonIndex}
+                      expanded={lessonIndex === currentLessonIndex}
+                      sx={{
+                        backgroundColor:
+                        lessonIndex === currentLessonIndex
+                          ? "rgba(255,255,255,0.15)"
+                          : "transparent",
+                        color: "white",
+                        borderRadius: 2,
+                        mb: 1,
+                        "&:before": { display: "none" },
+                        "&:hover": { backgroundColor: "rgba(255,255,255,0.08)" },
+                      }}
+                    >
+                      <AccordionSummary
+                        expandIcon={<ExpandMoreIcon sx={{ color: "white" }} />}
+                        onClick={() => setCurrentLessonIndex(index + lessons.partA.length)}
+                      >
+                        <Typography>
+                          {lessonIndex + 1}. {lesson.title}
+                        </Typography>
+                      </AccordionSummary>
+                      <AccordionDetails>
+                        <Typography
+                          variant="body2"
+                          sx={{ color: "gray.300", lineHeight: 1.6 }}
+                        >
+                          {lesson.description || "Click to view lesson content."}
+                        </Typography>
+                      </AccordionDetails>
+                    </Accordion>
+                  )
+                })}
+              </Paper>
+            </Grid>
+        </Grid>
+      </Box>
+    </Box>
   );
 };
 

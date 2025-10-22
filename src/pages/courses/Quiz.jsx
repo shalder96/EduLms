@@ -63,7 +63,7 @@ export default function Quiz({ quizTitle, questions }) {
   const progressWidth = `${(timer / 30) * 100}%`;
 
   return (
-    <div className="flex flex-col items-center justify-center p-6 text-white bg-gradient-to-r from-[#177E89] via-[#3D5A80] to-[#533A71] border-none rounded-lg">
+    <div className="flex flex-col items-center justify-center p-4 text-white bg-gradient-to-r from-[#177E89] via-[#3D5A80] to-[#533A71] border-none rounded-lg">
       <h1 className="mb-6 text-xl font-bold sm:text-2xl md:text-3xl">{quizTitle}</h1>
 
       {/* Start Screen */}
@@ -87,7 +87,7 @@ export default function Quiz({ quizTitle, questions }) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -25 }}
             transition={{ duration: 0.4 }}
-            className="w-full p-6 shadow-lg bg-white/10 rounded-2xl backdrop-blur-md"
+            className="pt-6 border-t border-gray-500"
           >
             {/* Top Bar */}
             <div className="flex justify-between mb-3 text-sm text-gray-200">
@@ -168,8 +168,9 @@ export default function Quiz({ quizTitle, questions }) {
           initial={{ opacity: 0, y: 25 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          className="flex flex-col justify-center p-8 text-center shadow-lg bg-white/10 rounded-2xl backdrop-blur-md"
+          className="relative flex flex-col justify-center p-8 text-center border-none shadow-groove bg-black/20 rounded-2xl backdrop-blur-md"
         >
+          <div className="absolute inset-0 z-10 border-none pointer-events-none bg-black/10 rounded-2xl"></div>
           <h2 className="mb-3 text-2xl font-bold">🎉 Quiz Finished!</h2>
           <p className="mb-4 text-lg">
             Your Score: <span className="font-bold">{score}</span> /{" "}

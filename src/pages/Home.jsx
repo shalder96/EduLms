@@ -2,7 +2,7 @@ import React from "react";
 import { FaChalkboardTeacher, FaLaptopCode, FaCertificate } from "react-icons/fa";
 import { Link, NavLink } from "react-router-dom";
 import Lottie from "lottie-react";
-import heroImage from "../../public/animations/heroImage.json";
+import heroImage from "../assets/animations/heroImage.json";
 
 const Home = () => {
   return (

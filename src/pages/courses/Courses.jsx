@@ -25,12 +25,18 @@ const Courses = () => {
 
 
   return (
-    <div className='bg-[#0F1B2A]/90 min-h-screen text-white py-20 px-6 md:px-16'>
+    <div className='bg-gradient-to-br from-[#177E89] via-[#3B5B8C] to-[#533A71] min-h-screen text-white py-20 px-6 md:px-16 relative z-0'>
+
+      {/* Overlay  */}
+      <div className='absolute inset-0 z-0 pointer-events-none bg-black/50'></div>
+
       {/* Filter Bar  */}
-      <CourseFilter onFilterChange={setFilter}/>
+      <div className='relative z-20'>
+        <CourseFilter onFilterChange={setFilter}/>
+      </div>
 
       {/* Course Grid  */}
-      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+      <div className="relative z-20 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
         {filteredCourses.length > 0 ? 
         (
           filteredCourses.map((course) => (

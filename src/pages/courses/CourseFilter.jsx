@@ -29,7 +29,7 @@ const CourseFilter = ({ onFilterChange }) => {
 
   return (
     
-    <div className="bg-none text-white px-6 py-4 rounded-lg flex flex-col md:flex-row gap-4 items-center justify-center">
+    <div className="flex flex-col items-center justify-center gap-4 px-6 py-4 text-white rounded-lg bg-none md:flex-row">
 
       {/* Select Board */}
       <select

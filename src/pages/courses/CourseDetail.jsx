@@ -1,6 +1,17 @@
 import React from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link as RouterLink, useNavigate } from "react-router-dom";
 import { coursesData } from "../../data/data";
+import {
+  Box,
+  Container,
+  Grid,
+  Typography,
+  Button,
+  Paper,
+  Link,
+  Divider,
+  Breadcrumbs,
+} from "@mui/material";
 
 const CourseDetail = () => {
   const { id } = useParams();
@@ -11,87 +22,237 @@ const CourseDetail = () => {
     navigate(`/courses/${id}/start`);
   };
 
-  if (!course) return <p className="mt-10 text-center text-white">Course not found!</p>;
+  if (!course)
+    return (
+      <Typography
+        sx={{ mt: 10, textAlign: "center", color: "white" }}
+        variant="h6"
+      >
+        Course not found!
+      </Typography>
+    );
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#0F1B2A] via-[#1A2C42] to-[#0F1B2A] text-white p-4 pt-20 pb-20 md:p-16">
-      
-      {/* Breadcrumb */}
-      <div className="mb-6 text-sm text-gray-300 ">
-        <Link to="/courses" className="hover:text-[#A6E1FA]">Courses</Link> &gt; {course.title}
-      </div>
+    <Box
+      sx={{
+        minHeight: "100vh",
+        background: "linear-gradient(135deg, #177E89, #3B5B8C, #533A71)",
+        color: "white",
+        py: { xs: 8, md: 12 },
+        px: { xs: 0, md: 8 },
+        position: "relative",
+      }}
+    >
+      {/* Overlay */}
+      <Box
+        sx={{
+          position: "absolute",
+          inset: 0,
+          bgcolor: "rgba(0,0,0,0.4)",
+          pointerEvents: "none",
+          zIndex: 0,
+        }}
+      />
 
-      
-       {/* Top Section / Hero */}
-      <div className="relative max-w-7xl mx-auto mt-12 md:mt-16 text-center bg-gradient-to-r from-[#533A71] to-[#177E89] rounded-3xl p-10 shadow-2xl">
-        <h1 className="mb-4 text-3xl font-bold md:text-5xl">
-          {course.board ? `${course.board} ` : ""} 
-          {course.class ? `${course.class} ` : ""} 
-          {course.title}
-        </h1>
-        <p className="mb-6 text-lg text-gray-200">
-          Your Ultimate Study Companion for {course.title} Excellence
-        </p>
+      <Container maxWidth="lg" sx={{ position: "relative", zIndex: 1 }}>
+        {/* Breadcrumb */}
+        <Breadcrumbs 
+          sx={{color: "gray", mb: 2, fontSize: "0.9rem" }}
+          separator=">"
+        >
+          <Link href="/courses" color="inherit" underline="hover">
+            Courses
+          </Link>
+          
+          <Link 
+            href={`/courses/${course.id}`}
+            underline="hover"
+            sx={{ color: "#A6E1FA"}}
+          >
+            {course.title}
+          </Link>
+        </Breadcrumbs>
 
-        <div className="inline-block px-6 py-2 text-sm font-semibold text-white border rounded-full shadow-md bg-white/20 border-white/30 backdrop-blur-md">
-          ✨ Updated for 2025–26 Academic Year ✨
-        </div>
-      </div>
+        {/* Hero Section */}
+        <Paper
+          elevation={8}
+          sx={{
+            textAlign: "center",
+            p: { xs: 4, md: 8 },
+            borderRadius: 4,
+            background: "linear-gradient(to right, #533A71, #177E89)",
+            color: "white",
+            mb: 8,
+          }}
+        >
+          <Typography
+            variant="h3"
+            sx={{ fontWeight: "bold", mb: 2, fontSize: { xs: "2rem", md: "3rem" } }}
+          >
+            {course.board ? `${course.board} ` : ""}
+            {course.class ? `${course.class} ` : ""}
+            {course.title}
+          </Typography>
 
-      {/* Content Section */}
-      <div className="mx-auto mt-10 transition-all duration-300 max-w-7xl hover:translate-y-2">
-        <div className="p-8 border shadow-xl bg-white/10 backdrop-blur-md rounded-2xl border-white/20">
-          <h2 className="mb-4 text-2xl font-semibold md:text-3xl">
+          <Typography variant="h6" sx={{ mb: 3, color: "gray.200" }}>
+            Your Ultimate Study Companion for {course.title} Excellence
+          </Typography>
+
+          <Typography
+            sx={{
+              display: "inline-block",
+              px: 3,
+              py: 1,
+              border: "1px solid rgba(255,255,255,0.3)",
+              borderRadius: "9999px",
+              backdropFilter: "blur(10px)",
+              fontWeight: 600,
+              bgcolor: "rgba(255,255,255,0.15)",
+              boxShadow: "0px 2px 6px rgba(0,0,0,0.3)",
+            }}
+          >
+            ✨ Updated for 2025–26 Academic Year ✨
+          </Typography>
+        </Paper>
+
+        {/* Content Section */}
+        <Paper
+          elevation={10}
+          sx={{
+            background: "rgba(255, 255, 255, 0.1)",
+            backdropFilter: "blur(20px) saturate(180%)",
+            WebkitBackdropFilter: "blur(20px) saturate(180%)", // for Safari
+            borderRadius: "20px",
+            border: "1px solid rgba(255, 255, 255, 0.2)",
+            boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.37)",
+            color: "white",
+            p: { xs: 2, sm: 4 }, 
+          }}
+        >
+          <Typography
+            variant="h4"
+            align="center"
+            sx={{ mb: 4, fontWeight: 600 }}
+          >
             🚀 Welcome to {course.title} Hub
-          </h2>
-          <p className="mb-6 leading-relaxed text-gray-300">
-            Dive into the fascinating world of <span className="font-semibold">{course.title}</span> with our comprehensive,
-            up-to-date study materials designed for{" "}
-            {course.board ? `${course.board} ` : ""}{" "}
-            {course.class ? `${course.class}` : ""} students.  
-            Stay ahead of the curve with the latest syllabus, interactive exercises, and concept-based learning modules!
-          </p>
+          </Typography>
 
-          <div className="flex flex-col items-center gap-8 mt-8 md:flex-row">
-            <img
-              src={course.image}
-              alt={course.title}
-              className="object-contain p-2 shadow-lg h-60 w-60 bg-white/10 rounded-2xl"
-            />
-            <div className="space-y-2 text-gray-300">
-              <p>
-                <span className="font-semibold text-white">Instructor:</span>{" "}
-                {course.instructor || "N/A"}
-              </p>
-              <p>
-                <span className="font-semibold text-white">Class:</span>{" "}
-                {course.class || "N/A"}
-              </p>
-              <p>
-                <span className="font-semibold text-white">Subject:</span>{" "}
-                {course.subject || "N/A"}
-              </p>
-              <p>
-                <span className="font-semibold text-white">Board:</span>{" "}
-                {course.board || "N/A"}
-              </p>
-            </div>
-          </div>
+          <Grid container spacing={4} alignItems="flex-start">
+            {/* Top - Image + Info */}
+            <Grid item xs={12} md={4} size={{xs: "grow", md: "auto"}} >
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: { xs: "center", md: "flex-start"},
+                  gap: 3,
+                }}
+              >
+                <Box
+                  component="img"
+                  src={course.image}
+                  alt={course.title}
+                  sx={{
+                    height: 200,
+                    width: 200,
+                    objectFit: "cover",
+                    bgcolor: "rgba(255,255,255,0.1)",
+                    p: 1,
+                    borderRadius: 3,
+                    boxShadow: 4,
+                  }}
+                />
+
+                <Box sx={{ color: "gray.300", fontSize: "0.95rem" }}>
+                  <Typography>
+                    <strong>Instructor:</strong> {course.instructor || "N/A"}
+                  </Typography>
+                  <Typography>
+                    <strong>Class:</strong> {course.class || "N/A"}
+                  </Typography>
+                  <Typography>
+                    <strong>Subject:</strong> {course.subject || "N/A"}
+                  </Typography>
+                  <Typography>
+                    <strong>Board:</strong> {course.board || "N/A"}
+                  </Typography>
+                </Box>
+              </Box>
+            </Grid>
+
+            {/* Bottom - Course Info */}
+            <Grid item xs={12} md={8}>
+              <Box
+                sx={{
+                  bgcolor: "rgba(0,0,0,0.3)",
+                  p: { xs: 2, md: 4 },
+                  borderRadius: 3,
+                  maxHeight: 400,
+                  overflowY: "auto",
+                }}
+              >
+                <Typography variant="body1" sx={{ mb: 2, color: "gray.200" }}>
+                  🚀 Dive into the fascinating world of{" "}
+                  <Box component="span" sx={{ color: "#A6E1FA", fontWeight: 600 }}>
+                    {course.title}
+                  </Box>{" "}
+                  with our comprehensive study materials designed for{" "}
+                  {course.board && (
+                    <Box component="span" sx={{ fontWeight: 600 }}>
+                      {course.board}
+                    </Box>
+                  )}{" "}
+                  {course.class && (
+                    <Box component="span" sx={{ fontWeight: 600 }}>
+                      {course.class}
+                    </Box>
+                  )}{" "}
+                  students.
+                </Typography>
+
+                <ul style={{ paddingLeft: "1rem", listStyle: "circle", marginBottom: "1rem" }}>
+                  <li>📘 Latest syllabus aligned with board guidelines</li>
+                  <li>🖋️ Concept-based learning modules for easy understanding</li>
+                  <li>💡 Interactive exercises to practice and test knowledge</li>
+                  <li>🎯 Tips and shortcuts to stay ahead of the curve</li>
+                  <li>📝 Quick summaries and notes for revision</li>
+                </ul>
+
+                <Typography variant="body2" sx={{ color: "gray.300" }}>
+                  {course.introduction}
+                </Typography>
+              </Box>
+            </Grid>
+          </Grid>
 
           {/* CTA Button */}
-          <div className="flex justify-center mt-10">
-            <button 
+          <Box sx={{ display: "flex", justifyContent: "center", mt: 5 }}>
+            <Button
               onClick={handleStartCourse}
-              className="relative overflow-hidden text-white font-semibold px-10 py-3 rounded-full shadow-lg transition-all duration-300
-              bg-gradient-to-r from-[#177E89] via-[#3D5A80] to-[#533A71] hover:scale-105 border border-white/20"
+              variant="contained"
+              sx={{
+                background:
+                  "linear-gradient(to right, #177E89, #3D5A80, #533A71)",
+                borderRadius: "9999px",
+                px: 6,
+                py: 1.5,
+                fontWeight: "bold",
+                fontSize: "1rem",
+                textTransform: "none",
+                transition: "0.3s",
+                "&:hover": {
+                  transform: "scale(1.05)",
+                  background:
+                    "linear-gradient(to right, #533A71, #177E89, #3D5A80)",
+                },
+              }}
             >
-              <span className="relative z-10">🚀 Start Course</span>
-              <span className="absolute inset-0 bg-gradient-to-r from-[#533A71] via-[#177E89] to-[#3D5A80] opacity-0 hover:opacity-100 transition-opacity duration-500 rounded-full"></span>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+              🚀 Start Course
+            </Button>
+          </Box>
+        </Paper>
+      </Container>
+    </Box>
   );
 };
 

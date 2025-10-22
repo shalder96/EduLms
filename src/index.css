@@ -7,12 +7,9 @@ body {
   background: linear-gradient(135deg, #177E89, #3B5B8C, #533A71);
 }
 
-#root, .App {
+/* #root, .App {
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background: transparent; /* Keeps gradient visible */
-}
+} */
 
 /* Optional: Subtle scroll glow (looks amazing on long LMS pages) */
 ::-webkit-scrollbar {

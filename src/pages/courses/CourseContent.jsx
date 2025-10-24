@@ -34,6 +34,8 @@ const CourseContent = () => {
 
   const [currentLessonIndex, setCurrentLessonIndex] = useState(0);
   const [progress, setProgress] = useState(0);
+  const [activeQuiz, setActiveQuiz] = useState([]);     //state that hold current quiz data
+
 
   // Load progress from localStorage
   useEffect(() => {
@@ -58,6 +60,25 @@ const CourseContent = () => {
  
 
   const currentLesson = allLessons[currentLessonIndex];
+
+  const handleLessonClick = (lesson, index) => {
+    setCurrentLessonIndex(index);
+    // const quizData = class10AIQuizData[lesson.id] || [];
+    // setActiveQuiz(quizData);
+  }
+
+  useEffect(() => {
+    if (!allLessons || allLessons.length === 0) return;
+
+    const selectedLesson = allLessons[currentLessonIndex];
+    if (selectedLesson) {
+      // ✅ make sure quizData exists for this lesson ID
+      const quizData = class10AIQuizData[selectedLesson.id] || [];
+      setActiveQuiz([...quizData]); // clone to ensure re-render
+    }
+  }, [currentLessonIndex]);
+
+
 
   const handleNext = () => {
       if (currentLessonIndex < allLessons.length - 1) {
@@ -230,10 +251,18 @@ const CourseContent = () => {
                   >
                     🧠 Quick Quiz <IoPlayCircleOutline />
                   </Typography>
-                  <Quiz
-                    quizTitle={`Quiz on ${currentLesson.title}`}
-                    questions={class10AIQuizData}
-                  />
+
+                  {activeQuiz && activeQuiz.length > 0 ? (
+                    <Quiz
+                      quizTitle={`Quiz on ${currentLesson.title}`}
+                      questions={activeQuiz}
+                      key={currentLesson.id}   // ✅ force re-render when lesson changes
+                    />
+                  ) : (
+                    <div className="py-6 italic text-center text-gray-400">
+                      🔒 Select a lesson to start its quiz.
+                    </div>
+                  )}
                 </Box>
 
                   {/* Navigation Buttons  */}
@@ -325,7 +354,7 @@ const CourseContent = () => {
                   >
                     <AccordionSummary
                       expandIcon={<ExpandMoreIcon sx={{ color: "white" }} />}
-                      onClick={() => setCurrentLessonIndex(index)}
+                      onClick={() => handleLessonClick(lesson, index)}
                     >
                       <Typography>
                         {index + 1}. {lesson.title}
@@ -369,7 +398,7 @@ const CourseContent = () => {
                     >
                       <AccordionSummary
                         expandIcon={<ExpandMoreIcon sx={{ color: "white" }} />}
-                        onClick={() => setCurrentLessonIndex(index + lessons.partA.length)}
+                        onClick={() => handleLessonClick(lesson, index + lessons.partA.length)}
                       >
                         <Typography>
                           {lessonIndex + 1}. {lesson.title}

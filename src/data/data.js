@@ -13,27 +13,27 @@ export const coursesData = [
     board: "CBSE",
     lessons: {
       partA: [
-        {
+        { id: "com_skill",
           title: "Communication Skills",
           video: "🎬 Communication Video",
           notes: "AI is the simulation of human intelligence in machines. Learn the basics here.",
         },
-        {
+        { id: "self_mgmt_skill",
           title: "Self Management Skills",
           video: "🎬 Management Video",
           notes: "AI is the simulation of human intelligence in machines. Learn the basics here.",
         },
-        {
+        { id: "ict_skill",
           title: "ICT Skills",
           video: "🎬 ICT Skills Video",
           notes: "AI is the simulation of human intelligence in machines. Learn the basics here.",
         },
-        {
+        { id: "entre_skill",
           title: "Entreprenewrial Skills",
           video: "🎬 Entrepreneurial Skills Video",
           notes: "AI is the simulation of human intelligence in machines. Learn the basics here.",
         },
-        {
+        { id: "green_skill",
           title: "Green Skills",
           video: "🎬 Green Skills Video",
           notes: "AI is the simulation of human intelligence in machines. Learn the basics here.",
@@ -41,37 +41,37 @@ export const coursesData = [
       ],
       partB: [
         
-        {
+        { id: "intro_to_AI",
           title: "Introduction to AI",
           video: "🎬 Intro Video",
           notes: "Understand supervised, unsupervised, and reinforcement learning.",
         },
-        {
+        { id: "ai_project_cycle",
           title: "AI Project Cycle",
           video: "🎬 Project Cycle Video",
           notes: "Learn about neural networks, CNNs, RNNs, and applications.",
         },
-        {
+        { id: "advanced_python",
           title: "Advance Python",
           video: "🎬Advance Python Video",
           notes: "Explore AI applications in healthcare, finance, robotics, and NLP.",
         },
-        {
+        { id: "data_sci",
           title: "Data Science",
           video: "🎬Data Science Video",
           notes: "Explore AI applications in healthcare, finance, robotics, and NLP.",
         },
-        {
+        { id: "comp_vision",
           title: "Computer Vision",
           video: "🎬Computer Vision Video",
           notes: "Explore AI applications in healthcare, finance, robotics, and NLP.",
         },
-        {
+        { id: "nlp",
           title: "Natural Language Processing",
           video: "🎬NLP Video",
           notes: "Explore AI applications in healthcare, finance, robotics, and NLP.",
         },
-        {
+        { id: "eval",
           title: "Evaluation",
           video: "🎬Eval Video",
           notes: "Explore AI applications in healthcare, finance, robotics, and NLP.",

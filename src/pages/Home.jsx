@@ -1,7 +1,8 @@
 import React from "react";
-import { FaChalkboardTeacher, FaLaptopCode, FaCertificate } from "react-icons/fa";
+import { cards } from "../data/data";
 import { Link, NavLink } from "react-router-dom";
 import Lottie from "lottie-react";
+import { motion } from "framer-motion";
 import heroImage from "../assets/animations/heroImage.json";
 
 const Home = () => {
@@ -44,29 +45,21 @@ const Home = () => {
         </h2>
 
         <div className="grid max-w-6xl gap-10 px-8 mx-auto md:grid-cols-3">
-          <div className="p-8 transition rounded-2xl bg-white/10 backdrop-blur-md hover:bg-white/20">
-            <FaChalkboardTeacher className="text-5xl mx-auto mb-4 text-[#A6E1FA]" />
-            <h3 className="mb-2 text-xl font-semibold">Expert Instructors</h3>
-            <p className="text-gray-300">
-              Learn from professionals with years of real-world experience.
-            </p>
-          </div>
-
-          <div className="p-8 transition rounded-2xl bg-white/10 backdrop-blur-md hover:bg-white/20">
-            <FaLaptopCode className="text-5xl mx-auto mb-4 text-[#A6E1FA]" />
-            <h3 className="mb-2 text-xl font-semibold">Interactive Learning</h3>
-            <p className="text-gray-300">
-              Hands-on lessons and quizzes to make learning fun and effective.
-            </p>
-          </div>
-
-          <div className="p-8 transition rounded-2xl bg-white/10 backdrop-blur-md hover:bg-white/20">
-            <FaCertificate className="text-5xl mx-auto mb-4 text-[#A6E1FA]" />
-            <h3 className="mb-2 text-xl font-semibold">Certificates</h3>
-            <p className="text-gray-300">
-              Earn verifiable certificates that boost your professional profile.
-            </p>
-          </div>
+         {cards.map((card, i) => (
+          <motion.div
+            key={i}
+            className="p-8 text-center transition rounded-2xl bg-white/10 backdrop-blur-md hover:bg-white/20"
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: i * 0.2, ease: "easeInOut" }}
+            viewport={{ once: true }}
+          >
+            <div className=" flex justify-center text-5xl mx-auto mb-4 text-[#A6E1FA]">{card.icon}</div>
+            <h3 className="mb-2 text-xl font-semibold">{card.title}</h3>
+            <p className="text-gray-300">{card.desc}</p>
+            
+          </motion.div>
+         ))}
         </div>
       </section>
 

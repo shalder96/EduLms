@@ -1,3 +1,22 @@
+import { FaChalkboardTeacher, FaLaptopCode, FaCertificate } from "react-icons/fa";
+export const cards = [
+  {
+    icon: <FaChalkboardTeacher />,
+    title: "Expert Instructors",
+    desc: "Learn from professionals with years of real-world experience.",
+  },
+  {
+    icon: <FaLaptopCode />,
+    title: "Flexible Learning",
+    desc: "Study anytime, anywhere at your own pace.",
+  },
+  {
+    icon: <FaCertificate />,
+    title: "Career Guidance",
+    desc: "Get mentorship and job readiness tips.",
+  },
+];
+
 export const coursesData = [
   {
     id: 1,

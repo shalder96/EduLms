@@ -192,7 +192,7 @@ const CourseContent = () => {
         {/* Main Content */}
         <Grid container spacing={3} >
             {/* Left: Video + Notes + Quiz */}
-            <Grid item xs={12} md={8} lg={8} size="grow" >
+            <Grid item xs={12} sm={12} md={8} lg={8} sx={{ flexGrow: 1 }} >
               <Paper
                 elevation={6}
                 sx={{
@@ -308,7 +308,7 @@ const CourseContent = () => {
             </Grid>
 
             {/* Right: Lesson List */}
-            <Grid item xs={12} md={4} lg={4}>
+            <Grid item xs={12} sm={12} md={4} lg={4}>
               <Paper
                 elevation={6}
                 sx={{

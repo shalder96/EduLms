@@ -19,7 +19,7 @@ export const cards = [
 
 export const coursesData = [
   {
-    id: 1,
+    id: "cbse_class10_ai",
     title: "Artificial Intelligence",
     description: "Learn AI from scratch and be prepared for Board Examination",
     introduction: `
@@ -96,11 +96,31 @@ export const coursesData = [
           notes: "Explore AI applications in healthcare, finance, robotics, and NLP.",
         },
       ],
+      partC: [
+        { id: "mock1",
+          title: "Mock Test 1",
+          video: "",
+          pdf: "https://drive.google.com/file/d/1p9kqZJwsusBIdO9fwtgoKOCRIf-0DavV/preview",
+          notes: "Understand supervised, unsupervised, and reinforcement learning.",
+        },
+        { id: "mock2",
+          title: "Mock Test 2",
+          video: "",
+          pdf: "",
+          notes: "Understand supervised, unsupervised, and reinforcement learning.",
+        },
+        { id: "mock3",
+          title: "Mock Test 3",
+          video: "",
+          pdf: "",
+          notes: "Understand supervised, unsupervised, and reinforcement learning.",
+        },
+      ],
      
     },
   },
   {
-    id: 2,
+    id: "javascript",
     title: "JavaScript Essentials",
     description: "Master the fundamentals of JavaScript for web development.",
     instructor: "Jane Smith",
@@ -132,7 +152,7 @@ export const coursesData = [
     ],
   },
   {
-    id: 3,
+    id: "css",
     title: "CSS & Tailwind",
     description: "Design beautiful and responsive websites using CSS & Tailwind.",
     instructor: "Alex Johnson",
@@ -164,7 +184,7 @@ export const coursesData = [
     ],
   },
   {
-    id: 4,
+    id: "node",
     title: "Node.js & Express",
     description: "Build backend APIs with Node.js and Express.",
     instructor: "Emily Brown",

@@ -15,12 +15,8 @@ import {
 
 const CourseDetail = () => {
   const { id } = useParams();
-  const course = coursesData.find((c) => c.id === parseInt(id));
+  const course = coursesData.find((c) => c.id === id);
   const navigate = useNavigate();
-
-  const handleStartCourse = () => {
-    navigate(`/courses/${id}/start`);
-  };
 
   if (!course)
     return (
@@ -31,6 +27,10 @@ const CourseDetail = () => {
         Course not found!
       </Typography>
     );
+  const handleStartCourse = () => {
+    navigate(`/courses/${id}/start`);
+  };
+
 
   return (
     <Box

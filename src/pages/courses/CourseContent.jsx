@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams} from "react-router-dom";
+import { useParams, Link as RouterLink} from "react-router-dom";
 import { coursesData } from "../../data/data";
 import Quiz from "./Quiz";
 import { class10AIQuizData } from "../../data/aiqna";
@@ -19,17 +19,31 @@ import {
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { IoPlayCircleOutline } from "react-icons/io5";
+import { Worker, Viewer } from '@react-pdf-viewer/core';
+import '@react-pdf-viewer/core/lib/styles/index.css';
+import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 
 
 const CourseContent = () => {
   const { id } = useParams();
-  const course = coursesData.find((c) => c.id === parseInt(id));
+  const course = coursesData.find((c) => c.id === id);
   const lessons = course.lessons;
-   if (!course || !lessons || (!lessons.partA && !lessons.partB)) {
+  const allLessons = [];
+
+  // Loop over all parts dynamically
+  if (lessons && typeof lessons === "object") {
+    Object.keys(lessons).forEach((partKey) => {
+      const partLessons = lessons[partKey];
+      if (Array.isArray(partLessons)) {
+        allLessons.push(...partLessons);
+      }
+    });
+}
+  
+  if (!course || allLessons.length === 0) {
 
     return (<p className="mt-10 text-center text-white">Course not found!</p>);
   }
-  const allLessons = [...(lessons.partA || []), ...(lessons.partB || [])];
 
 
   const [currentLessonIndex, setCurrentLessonIndex] = useState(0);
@@ -63,8 +77,6 @@ const CourseContent = () => {
 
   const handleLessonClick = (lesson, index) => {
     setCurrentLessonIndex(index);
-    // const quizData = class10AIQuizData[lesson.id] || [];
-    // setActiveQuiz(quizData);
   }
 
   useEffect(() => {
@@ -147,6 +159,8 @@ const CourseContent = () => {
         <Paper 
           elevation={6}
           sx={{
+            minWidth: 0,
+            maxWidth: "100%",
             background: "black",
             backgroundImage: `url(${AIImage})`,
             backgroundSize: "cover",
@@ -192,7 +206,7 @@ const CourseContent = () => {
         {/* Main Content */}
         <Grid container spacing={3} >
             {/* Left: Video + Notes + Quiz */}
-            <Grid item xs={12} sm={12} md={8} lg={8} sx={{ flexGrow: 1 }} >
+            <Grid item xs={12} sm={12} md={8} lg={8} sx={{ flexGrow: 1 }}>
               <Paper
                 elevation={6}
                 sx={{
@@ -203,8 +217,11 @@ const CourseContent = () => {
                   border: "1px solid rgba(255, 255, 255, 0.2)",
                   display: "flex",
                   flexDirection: "column",
-                  gap: 4,
+                  gap: { xs: 1, md: 4 },
                   p: { xs: 2, md: 4 },
+                  minWidth: 0,
+                  width: "100%",
+                  maxWidth: "100%",
                 }}
               >
                 {/* LESSON TITLE  */}
@@ -213,20 +230,37 @@ const CourseContent = () => {
                 </Typography>
               
 
-                {/* Video Box */}
+                {/* Video or PDF Box */}
                 <Box
                   sx={{
-                    aspectRatio: "16/9",
+                    aspectRatio: currentLesson.video ? "16/9" : "auto",
                     backgroundColor: "rgba(0,0,0,0.4)",
                     borderRadius: 2,
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     fontSize: "1.5rem",
+                    minWidth: 0,
+                    width: "100%",
+                    maxWidth: "100%",
                   }}
                 >
                   {currentLesson.video && (
-                    <video src={currentLesson.video} controls style={{ width: "100%", borderRadius: 8 }} />
+                    <video 
+                      src={currentLesson.video} 
+                      controls 
+                      style={{ width: "100%", borderRadius: 8 }} 
+                    />
+                  )}
+                  {currentLesson.pdf && (
+                    <iframe
+                      src={currentLesson.pdf}
+                      title="Lesson PDF"
+                      width="100%"
+                      height="480"
+                      allow="autoplay"
+                      style={{ border: "none", borderRadius: 8 }}
+                    />
                   )}
                 </Box>
 
@@ -234,7 +268,17 @@ const CourseContent = () => {
                 <Box>
                   <Typography
                     variant="h6"
-                    sx={{ color: "#A6E1FA", fontWeight: 600, mb: 1, display: "flex", alignItems: "center", gap: 3 }}
+                    sx={{ 
+                      color: "#A6E1FA", 
+                      fontWeight: 600, 
+                      mb: 1, 
+                      display: "flex", 
+                      alignItems: "center", 
+                      gap: { xs: 1, md: 4 }, 
+                      minWidth: 0,
+                      width: "100%",
+                      maxWidth: "100%",
+                    }}
                   >
                     📒 Lesson Notes <IoPlayCircleOutline />
                   </Typography>
@@ -247,7 +291,17 @@ const CourseContent = () => {
                 <Box>
                   <Typography
                     variant="h6"
-                    sx={{ color: "#A6E1FA", fontWeight: 600, mb: 1, display: "flex", alignItems: "center", gap: 3 }}
+                    sx={{ 
+                      color: "#A6E1FA", 
+                      fontWeight: 600, 
+                      mb: 1, 
+                      display: "flex", 
+                      alignItems: "center", 
+                      gap: { xs: 1, md: 4 },
+                      minWidth: 0,
+                      width: "100%",
+                      maxWidth: "100%",
+                    }}
                   >
                     🧠 Quick Quiz <IoPlayCircleOutline />
                   </Typography>
@@ -256,7 +310,7 @@ const CourseContent = () => {
                     <Quiz
                       quizTitle={`Quiz on ${currentLesson.title}`}
                       questions={activeQuiz}
-                      key={currentLesson.id}   // ✅ force re-render when lesson changes
+                      key={currentLesson.id}   //force re-render when lesson changes
                     />
                   ) : (
                     <div className="py-6 italic text-center text-gray-400">
@@ -270,6 +324,9 @@ const CourseContent = () => {
                   sx={{
                     display: "flex",
                     justifyContent: "space-between",
+                    minWidth: 0,
+                    width: "100%",
+                    maxWidth: "100%",
                   }}
                 >
                   {/* Previous Button */}
@@ -306,7 +363,7 @@ const CourseContent = () => {
                 </Box>
               </Paper>
             </Grid>
-
+            
             {/* Right: Lesson List */}
             <Grid item xs={12} sm={12} md={4} lg={4}>
               <Paper
@@ -314,107 +371,90 @@ const CourseContent = () => {
                 sx={{
                   background: "rgba(255, 255, 255, 0.1)",
                   backdropFilter: "blur(20px) saturate(180%)",
-                  WebkitBackdropFilter: "blur(20px) saturate(180%)", // for Safari
+                  WebkitBackdropFilter: "blur(20px) saturate(180%)", // Safari
                   borderRadius: "20px",
                   border: "1px solid rgba(255, 255, 255, 0.2)",
                   boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.37)",
                   display: "flex",
                   flexDirection: "column",
                   p: { xs: 2, md: 4 },
+                  minWidth: 0,
+                  width: "100%",
+                  maxWidth: "100%",
                 }}
               >
-
-                <Typography variant="h6" fontWeight={600} mb={2} sx={{color:"#A6E1FA",}}>
+                <Typography 
+                  variant="h6" 
+                  fontWeight={600} 
+                  mb={2} 
+                  sx={{ color: "#A6E1FA" }}
+                >
                   📚 Course Lessons
                 </Typography>
 
-                {/* Part A  */}
-                <Typography
-                  variant="subtitle1"
-                  sx={{ color: "gray.300", fontWeight: 500, mb: 1 , display: "flex", alignItems: "center", gap: 3}}
-                >
-                  Part A <IoPlayCircleOutline />
-                </Typography>
-                {lessons.partA.map((lesson, index) => (
-                  <Accordion
-                    key={index}
-                    
-                    expanded={index === currentLessonIndex}
-                    sx={{
-                      backgroundColor:
-                      index === currentLessonIndex
-                        ? "rgba(255,255,255,0.15)"
-                        : "transparent",
-                      color: "white",
-                      borderRadius: 2,
-                      mb: 1,
-                      "&:before": { display: "none" },
-                      "&:hover": { backgroundColor: "rgba(255,255,255,0.08)" },
-                    }}
-                  >
-                    <AccordionSummary
-                      expandIcon={<ExpandMoreIcon sx={{ color: "white" }} />}
-                      onClick={() => handleLessonClick(lesson, index)}
-                    >
-                      <Typography>
-                        {index + 1}. {lesson.title}
-                      </Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                      <Typography
-                        variant="body2"
-                        sx={{ color: "gray.300", lineHeight: 1.6 }}
-                      >
-                        {lesson.description || "Click to view lesson content."}
-                      </Typography>
-                    </AccordionDetails>
-                  </Accordion>
-                ))}
+                {/* Loop over parts dynamically */}
+                {lessons &&
+                  Object.keys(lessons).map((partKey) => {
+                    const partLessons = lessons[partKey];
+                    if (!partLessons || !partLessons.length) return null;
 
-                {/* Part B  */}
-                <Typography
-                  variant="subtitle1"
-                  sx={{ color: "gray.300", fontWeight: 500, mb: 1, display: "flex", alignItems: "center", gap: 3 }}
-                >
-                  Part B <IoPlayCircleOutline />
-                </Typography>
-                {lessons.partB.map((lesson, index) => {
-                  const lessonIndex = index + lessons.partA.length; // offset
-                  return (
-                    <Accordion
-                      key={lessonIndex}
-                      expanded={lessonIndex === currentLessonIndex}
-                      sx={{
-                        backgroundColor:
-                        lessonIndex === currentLessonIndex
-                          ? "rgba(255,255,255,0.15)"
-                          : "transparent",
-                        color: "white",
-                        borderRadius: 2,
-                        mb: 1,
-                        "&:before": { display: "none" },
-                        "&:hover": { backgroundColor: "rgba(255,255,255,0.08)" },
-                      }}
-                    >
-                      <AccordionSummary
-                        expandIcon={<ExpandMoreIcon sx={{ color: "white" }} />}
-                        onClick={() => handleLessonClick(lesson, index + lessons.partA.length)}
-                      >
-                        <Typography>
-                          {lessonIndex + 1}. {lesson.title}
-                        </Typography>
-                      </AccordionSummary>
-                      <AccordionDetails>
+                    return (
+                      <Box key={partKey} sx={{ mb: 2 }}>
+                        {/* Part Title */}
                         <Typography
-                          variant="body2"
-                          sx={{ color: "gray.300", lineHeight: 1.6 }}
+                          variant="subtitle1"
+                          sx={{ 
+                            color: "gray.100", 
+                            fontWeight: 500, 
+                            mb: 1,
+                            display: "flex",
+                            justifyContent: "start",
+                            alignItems: "center",
+                            gap: 3, 
+                          }}
                         >
-                          {lesson.description || "Click to view lesson content."}
+                          {partKey.replace(/part/i, "Part ")} <IoPlayCircleOutline />
                         </Typography>
-                      </AccordionDetails>
-                    </Accordion>
-                  )
-                })}
+
+                        {/* Lessons inside the part */}
+                        {partLessons.map((lesson) => {
+                          const lessonIndex = allLessons.findIndex((l) => l.id === lesson.id);
+                          return (
+                            <Accordion
+                              key={lesson.id}
+                              expanded={lessonIndex === currentLessonIndex}
+                              onClick={() => handleLessonClick(lesson, lessonIndex)}
+                              sx={{
+                                backgroundColor:
+                                  lessonIndex === currentLessonIndex
+                                    ? "rgba(255,255,255,0.15)"
+                                    : "transparent",
+                                color: "white",
+                                borderRadius: 2,
+                                mb: 1,
+                                "&:before": { display: "none" },
+                                "&:hover": { backgroundColor: "rgba(255,255,255,0.08)" },
+                              }}
+                            >
+                              <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: "white" }} />}>
+                                <Typography>
+                                  {lessonIndex + 1}. {lesson.title}
+                                </Typography>
+                              </AccordionSummary>
+                              <AccordionDetails>
+                                <Typography
+                                  variant="body2"
+                                  sx={{ color: "gray.300", lineHeight: 1.6 }}
+                                >
+                                  {lesson.description || "Click to view lesson content."}
+                                </Typography>
+                              </AccordionDetails>
+                            </Accordion>
+                          );
+                        })}
+                      </Box>
+                    );
+                  })}
               </Paper>
             </Grid>
         </Grid>

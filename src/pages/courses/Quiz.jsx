@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Box, Typography, Button, LinearProgress, Paper } from "@mui/material";
 import { motion, AnimatePresence } from "framer-motion";
 import { VscDebugRestart } from "react-icons/vsc";
 
@@ -63,19 +64,49 @@ export default function Quiz({ quizTitle, questions }) {
   const progressWidth = `${(timer / 30) * 100}%`;
 
   return (
-    <div className="flex flex-col items-center justify-center p-4 text-white bg-gradient-to-r from-[#177E89] via-[#3D5A80] to-[#533A71] border-none rounded-lg">
-      <h1 className="mb-6 text-xl font-bold sm:text-2xl md:text-3xl">{quizTitle}</h1>
+    <Paper
+      elevation={6}
+      sx={{
+        width: "100%",
+        maxWidth: 800,
+        mx: "auto",
+        overflow: "hidden",
+        borderRadius: 3,
+        textAlign: "center",
+        color: "white",
+        p: {xs: 2, md:3},
+        background: "linear-gradient(90deg, #177E89, #3D5A80, #533A71)",
+      }}
+    >
+      <Typography
+        variant="h4"
+        fontWeight="bold"
+        mb={4}
+        sx={{ textShadow: "0 2px 6px rgba(0,0,0,0.4)" }}
+      >
+        {quizTitle}
+      </Typography>
 
       {/* Start Screen */}
       {!started && !finished && (
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={startQuiz}
-          className="px-6 py-3 font-semibold text-indigo-600 transition-transform bg-white rounded-full shadow-lg hover:scale-105"
-        >
-          🚀 Start Quiz
-        </motion.button>
+        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <Button
+            variant="contained"
+            onClick={startQuiz}
+            sx={{
+              bgcolor: "white",
+              color: "#3D5A80",
+              fontWeight: "600",
+              borderRadius: 9999,
+              px: 4,
+              py: 1.5,
+              boxShadow: 3,
+              "&:hover": { transform: "scale(1.05)" },
+            }}
+          >
+            🚀 Start Quiz
+          </Button>
+        </motion.div>
       )}
 
       {/* Quiz Body */}
@@ -87,52 +118,87 @@ export default function Quiz({ quizTitle, questions }) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -25 }}
             transition={{ duration: 0.4 }}
-            className="pt-6 border-t border-gray-500"
           >
             {/* Top Bar */}
-            <div className="flex justify-between mb-3 text-sm text-gray-200">
-              <p>
+            <Box
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+              mb={2}
+            >
+              <Typography variant="body2">
                 Question {currentIndex + 1} / {quizQuestions.length}
-              </p>
-              <p className="font-semibold text-yellow-300">⏱ {timer}s</p>
-            </div>
+              </Typography>
+              <Typography variant="body2" color="warning.main" fontWeight="bold">
+                ⏱ {timer}s
+              </Typography>
+            </Box>
 
-            {/* Timer Progress Bar */}
-            <div className="w-full h-2 mb-5 overflow-hidden rounded-full bg-white/20">
-              <motion.div
-                className="h-2 bg-yellow-400"
-                initial={{ width: "100%" }}
-                animate={{ width: progressWidth }}
-                transition={{ ease: "linear", duration: 0.2 }}
-              />
-            </div>
+            {/* Timer Progress */}
+            <LinearProgress
+              variant="determinate"
+              value={(timer / 30) * 100}
+              sx={{
+                height: 8,
+                borderRadius: 5,
+                mb: 3,
+                backgroundColor: "rgba(255,255,255,0.3)",
+                "& .MuiLinearProgress-bar": {
+                  backgroundColor: "#FFD700",
+                },
+              }}
+            />
 
             {/* Question */}
-            <h2 className="mb-4 text-lg font-semibold md:text-xl lg:text-2xl">
+            <Typography
+              variant="h6"
+              fontWeight="600"
+              mb={3}
+              sx={{ 
+                textShadow: "0 1px 4px rgba(0,0,0,0.3)",
+                wordBreak: "break-word",
+                whiteSpace: "normal",
+                overflowWrap: "break-word",
+                textAlign: "start",
+              }}
+            >
               {quizQuestions[currentIndex].question}
-            </h2>
+            </Typography>
 
             {/* Options */}
-            <div className="space-y-3">
+            <Box display="flex" flexDirection="column" gap={1.5}>
               {quizQuestions[currentIndex].options.map((option, idx) => (
-                <motion.button
-                  key={idx}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => handleOptionClick(option)}
-                  className={`w-full text-left px-4 py-2 rounded-lg border border-white/20 transition ${
-                    selected
-                      ? option === quizQuestions[currentIndex].answer
-                        ? "bg-green-500 text-white"
-                        : option === selected
-                        ? "bg-red-500 text-white"
-                        : "bg-white/10"
-                      : "bg-white/10 hover:bg-white/20"
-                  }`}
-                >
-                  {option}
-                </motion.button>
+                <motion.div key={idx} whileTap={{ scale: 0.98 }}>
+                  <Button
+                    fullWidth
+                    variant="outlined"
+                    onClick={() => handleOptionClick(option)}
+                    sx={{
+                      justifyContent: "flex-start",
+                      textTransform: "none",
+                      borderColor: "rgba(255,255,255,0.3)",
+                      whiteSpace: "normal",
+                      wordBreak: "break-word",
+                      lineHeight: 1.4,
+                      color: "white",
+                      textAlign: "start",
+                      bgcolor: selected
+                        ? option === quizQuestions[currentIndex].answer
+                          ? "success.main"
+                          : option === selected
+                          ? "error.main"
+                          : "rgba(255,255,255,0.1)"
+                        : "rgba(255,255,255,0.1)",
+                      "&:hover": {
+                        bgcolor: "rgba(255,255,255,0.2)",
+                      },
+                    }}
+                  >
+                    {option}
+                  </Button>
+                </motion.div>
               ))}
-            </div>
+            </Box>
 
             {/* Feedback */}
             <AnimatePresence>
@@ -141,23 +207,38 @@ export default function Quiz({ quizTitle, questions }) {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
-                  className="mt-4 text-lg font-medium text-center"
                 >
-                  {feedback}
+                  <Typography
+                    mt={3}
+                    variant="subtitle1"
+                    fontWeight="500"
+                    textAlign="center"
+                  >
+                    {feedback}
+                  </Typography>
                 </motion.div>
               )}
             </AnimatePresence>
 
             {/* Next Button */}
-            <div className="mt-6 text-center">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                onClick={handleNext}
-                className="px-4 py-2 font-semibold text-indigo-800 transition bg-yellow-400 rounded-full hover:scale-105"
-              >
-                Next ➡️
-              </motion.button>
-            </div>
+            <Box mt={4}>
+              <motion.div whileHover={{ scale: 1.05 }}>
+                <Button
+                  onClick={handleNext}
+                  sx={{
+                    bgcolor: "#FFD700",
+                    color: "#2E294E",
+                    fontWeight: "bold",
+                    borderRadius: 9999,
+                    px: 3,
+                    py: 1,
+                    "&:hover": { bgcolor: "#FFC107" },
+                  }}
+                >
+                  Next ➡️
+                </Button>
+              </motion.div>
+            </Box>
           </motion.div>
         )}
       </AnimatePresence>
@@ -168,24 +249,47 @@ export default function Quiz({ quizTitle, questions }) {
           initial={{ opacity: 0, y: 25 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          className="relative flex flex-col justify-center p-8 text-center border-none shadow-groove bg-black/20 rounded-2xl backdrop-blur-md"
         >
-          <div className="absolute inset-0 z-10 border-none pointer-events-none bg-black/10 rounded-2xl"></div>
-          <h2 className="mb-3 text-2xl font-bold">🎉 Quiz Finished!</h2>
-          <p className="mb-4 text-lg">
-            Your Score: <span className="font-bold">{score}</span> /{" "}
-            {quizQuestions.length}
-          </p>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={startQuiz}
-            className="flex items-center justify-center gap-2 px-6 py-3 font-semibold text-center text-indigo-600 transition-transform bg-white rounded-full shadow-lg hover:scale-105"
+          <Paper
+            elevation={4}
+            sx={{
+              p: 5,
+              borderRadius: 4,
+              background: "rgba(0,0,0,0.25)",
+              backdropFilter: "blur(10px)",
+              color: "white",
+              textAlign: "center",
+              mt: 3,
+            }}
           >
-             <VscDebugRestart />Restart
-          </motion.button>
+            <Typography variant="h5" fontWeight="bold" mb={2}>
+              🎉 Quiz Finished!
+            </Typography>
+            <Typography variant="h6" mb={3}>
+              Your Score: <strong>{score}</strong> / {quizQuestions.length}
+            </Typography>
+
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Button
+                variant="contained"
+                onClick={startQuiz}
+                startIcon={<VscDebugRestart />}
+                sx={{
+                  bgcolor: "white",
+                  color: "#3D5A80",
+                  borderRadius: 9999,
+                  fontWeight: 600,
+                  px: 3,
+                  py: 1.5,
+                  boxShadow: 3,
+                }}
+              >
+                Restart
+              </Button>
+            </motion.div>
+          </Paper>
         </motion.div>
       )}
-    </div>
+    </Paper>
   );
 }

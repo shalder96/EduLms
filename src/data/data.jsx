@@ -100,7 +100,7 @@ export const coursesData = [
         { id: "mock1",
           title: "Mock Test 1",
           video: "",
-          pdf: "https://drive.google.com/file/d/1p9kqZJwsusBIdO9fwtgoKOCRIf-0DavV/preview",
+          pdf: "https://drive.google.com/file/d/1lr392v4BZRilUydEkl8PADXXyjs34EzV/preview",
           notes: "Understand supervised, unsupervised, and reinforcement learning.",
         },
         { id: "mock2",

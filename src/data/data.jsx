@@ -209,11 +209,20 @@ export const classes = [
 ];
 
 export const subjects = [
-  "Math", 
-  "Science", 
-  "History", 
-  "English",
   "Artificial Intelligence",
+  "Bengali",
+  "Biology",
+  "Computer Application",
+  "Computer Science",
+  "Economics",
+  "English",
+  "Geography",
+  "History", 
+  "Information Technology",
+  "Mathematics", 
+  "Science", 
+  "Social Studies",
+
 ];
 
 export const boards = [

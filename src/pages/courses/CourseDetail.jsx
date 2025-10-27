@@ -28,7 +28,7 @@ const CourseDetail = () => {
       </Typography>
     );
   const handleStartCourse = () => {
-    navigate(`/courses/${id}/start`);
+    navigate(`/courses/${id}/content`);
   };
 
 
@@ -111,7 +111,7 @@ const CourseDetail = () => {
               boxShadow: "0px 2px 6px rgba(0,0,0,0.3)",
             }}
           >
-            ✨ Updated for 2025–26 Academic Year ✨
+            ✨ Updated for {`${new Date().getFullYear()}-${new Date().getFullYear() + 1}`} Academic Year ✨
           </Typography>
         </Paper>
 

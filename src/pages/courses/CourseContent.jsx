@@ -3,7 +3,6 @@ import { useParams, Link as RouterLink} from "react-router-dom";
 import { coursesData } from "../../data/data";
 import Quiz from "./Quiz";
 import { class10AIQuizData } from "../../data/aiqna";
-import AIImage from "../../assets/AIImage.png"
 import {
   Box,
   Button,
@@ -103,6 +102,19 @@ const CourseContent = () => {
       setCurrentLessonIndex(currentLessonIndex - 1);
     }
   };
+
+  const formatTitle = (text) => {
+  // Insert space before capital letters (e.g., numberSystem → number System)
+  const spaced = text.replace(/([a-z])([A-Z])/g, "$1 $2");
+  // Capitalize each word
+  return spaced
+    .split(" ")
+    .map(
+      (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+    )
+    .join(" ");
+};
+
   
   return (
     <Box 
@@ -162,7 +174,7 @@ const CourseContent = () => {
             minWidth: 0,
             maxWidth: "100%",
             background: "black",
-            backgroundImage: `url(${AIImage})`,
+            backgroundImage: `url(${course.headImage})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
             backgroundRepeat: "no-repeat",
@@ -198,6 +210,7 @@ const CourseContent = () => {
               }}
             />
           </Box>
+          
           <Typography variant="body2" sx={{ color: "gray.300" }}>
             {Math.round(progress)}% Completed
           </Typography>
@@ -413,7 +426,9 @@ const CourseContent = () => {
                             gap: 3, 
                           }}
                         >
-                          {partKey.replace(/part/i, "Part ")} <IoPlayCircleOutline />
+                          {!partKey.toLowerCase().includes("chapter")
+                          ? `Chapter: ${formatTitle(partKey)}`
+                          : partKey.replace(/part/i, "Part ")}<IoPlayCircleOutline />
                         </Typography>
 
                         {/* Lessons inside the part */}

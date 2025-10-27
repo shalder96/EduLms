@@ -25,7 +25,7 @@ const router = createBrowserRouter(
         <Route index element={<Home />} />
         <Route path='courses' element={<Courses />} />
         <Route path='courses/:id' element={<CourseDetail />} />
-        <Route path='courses/:id/start' element={<CourseContent />} />
+        <Route path='courses/:id/content' element={<CourseContent />} />
         <Route path='contact' element={<Contact />} />
         <Route path='dashboard' element={<Dashboard />} />
       </Route>

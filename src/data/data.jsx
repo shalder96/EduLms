@@ -361,6 +361,72 @@ export const coursesData = [
           notes: "",
         },
       ],
+      ratioProportion: [
+        {
+          id: "ratioAndProportion",
+          title: "Ratio and Proportion",
+          video: "🎬 Communication Video",
+          pdf: "",
+          notes: "",
+        },
+      ],
+      algebra: [
+        {
+          id: "algebra",
+          title: "Algebra",
+          video: "🎬 Communication Video",
+          pdf: "",
+          notes: "",
+        },
+      ],
+      geometry: [
+        {
+          id: "shapes",
+          title: "Understanding Shapes",
+          video: "🎬 Communication Video",
+          pdf: "",
+          notes: "",
+        },
+        {
+          id: "representing3din2d",
+          title: "Representing 3D in 2D",
+          video: "🎬 Communication Video",
+          pdf: "",
+          notes: "",
+        },
+        {
+          id: "constructionOfQuadrilaterals",
+          title: "Construction of Quadrilaterals",
+          video: "🎬 Communication Video",
+          pdf: "",
+          notes: "",
+        },
+        {
+          id: "circle",
+          title: "Circle",
+          video: "🎬 Communication Video",
+          pdf: "",
+          notes: "",
+        },
+      ],
+      mensuration: [
+        {
+          id: "mensuration",
+          title: "mensuration",
+          video: "🎬 Communication Video",
+          pdf: "",
+          notes: "",
+        },
+      ],
+      dataHandling: [
+        {
+          id: "dataHandling",
+          title: "Data Handling",
+          video: "🎬 Communication Video",
+          pdf: "",
+          notes: "",
+        },
+      ],
     }
       
   },

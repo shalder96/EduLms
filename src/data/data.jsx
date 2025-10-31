@@ -412,7 +412,7 @@ export const coursesData = [
       mensuration: [
         {
           id: "mensuration",
-          title: "mensuration",
+          title: "Mensuration",
           video: "🎬 Communication Video",
           pdf: "",
           notes: "",
@@ -422,6 +422,29 @@ export const coursesData = [
         {
           id: "dataHandling",
           title: "Data Handling",
+          video: "🎬 Communication Video",
+          pdf: "",
+          notes: "",
+        },
+      ],
+      mockTests: [
+        {
+          id: "mock1",
+          title: "Mock Test - 1",
+          video: "",
+          pdf: "https://drive.google.com/file/d/1bxyFGfmPTJO_rKQRFo77bD0N2FJczf0T/preview",
+          notes: "Topic covered in this test - Profit & Loss, Percent & Percentage, Discount, and GST, Simple and Compound Interest",
+        },
+        {
+          id: "mock2",
+          title: "Mock Test - 2",
+          video: "🎬 Communication Video",
+          pdf: "",
+          notes: "",
+        },
+        {
+          id: "mock3",
+          title: "Mock Test - 3",
           video: "🎬 Communication Video",
           pdf: "",
           notes: "",

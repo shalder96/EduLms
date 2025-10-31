@@ -246,7 +246,7 @@ const CourseContent = () => {
                 {/* Video or PDF Box */}
                 <Box
                   sx={{
-                    aspectRatio: currentLesson.video ? "16/9" : "auto",
+                    aspectRatio: currentLesson.video ? "16/9" : undefined,
                     backgroundColor: "rgba(0,0,0,0.4)",
                     borderRadius: 2,
                     display: "flex",
@@ -258,14 +258,13 @@ const CourseContent = () => {
                     maxWidth: "100%",
                   }}
                 >
-                  {currentLesson.video && (
-                    <video 
-                      src={currentLesson.video} 
-                      controls 
-                      style={{ width: "100%", borderRadius: 8 }} 
+                  {currentLesson.video ? (
+                    <video
+                      src={currentLesson.video}
+                      controls
+                      style={{ width: "100%", borderRadius: 8 }}
                     />
-                  )}
-                  {currentLesson.pdf && (
+                  ) : currentLesson.pdf ? (
                     <iframe
                       src={currentLesson.pdf}
                       title="Lesson PDF"
@@ -274,8 +273,13 @@ const CourseContent = () => {
                       allow="autoplay"
                       style={{ border: "none", borderRadius: 8 }}
                     />
+                  ) : (
+                    <Typography variant="body1" sx={{ color: "#fff", textAlign: "center" }}>
+                      No content available for this lesson.
+                    </Typography>
                   )}
                 </Box>
+
 
                 {/* Notes */}
                 <Box>

@@ -1,66 +1,75 @@
-import React, { useState, useEffect } from "react";
-import { useParams, Link as RouterLink} from "react-router-dom";
+// CourseContent.jsx
+import React, { useEffect, useMemo, useState } from "react";
+import { useParams, Link as RouterLink } from "react-router-dom";
 import { coursesData } from "../../data/data";
 import Quiz from "./Quiz";
 import { class10AIQuizData } from "../../data/aiqna";
+import ErrorBoundary from "../../components/ErrorBoundary";
 import {
   Box,
   Button,
   Typography,
   Breadcrumbs,
   Link,
-  Grid,
   Paper,
   LinearProgress,
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  IconButton,
+  CircularProgress,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import MenuBookIcon from "@mui/icons-material/MenuBook";
+import CloseIcon from "@mui/icons-material/Close";
 import { IoPlayCircleOutline } from "react-icons/io5";
-import { Worker, Viewer } from '@react-pdf-viewer/core';
-import '@react-pdf-viewer/core/lib/styles/index.css';
-import '@react-pdf-viewer/default-layout/lib/styles/index.css';
+import { motion, AnimatePresence } from "framer-motion";
+import { Worker, Viewer } from "@react-pdf-viewer/core";
+import "@react-pdf-viewer/core/lib/styles/index.css";
 
+const PDF_WORKER_URL = `https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js`;
+
+
+const clamp = (v, min, max) => Math.max(min, Math.min(max, v || 0));
 
 const CourseContent = () => {
   const { id } = useParams();
-  const course = coursesData.find((c) => c.id === id);
-  const lessons = course.lessons;
-  const allLessons = [];
+  const course = useMemo(() => coursesData.find((c) => c.id === id), [id]);
+  if (!course)
+    return <p className="mt-10 text-center text-white">Course not found!</p>;
 
-  // Loop over all parts dynamically
-  if (lessons && typeof lessons === "object") {
-    Object.keys(lessons).forEach((partKey) => {
-      const partLessons = lessons[partKey];
-      if (Array.isArray(partLessons)) {
-        allLessons.push(...partLessons);
-      }
-    });
-}
-  
-  if (!course || allLessons.length === 0) {
+  const lessonsObj = course.lessons || {};
+  const allLessons = useMemo(() => {
+    const arr = [];
+    if (lessonsObj && typeof lessonsObj === "object") {
+      Object.keys(lessonsObj).forEach((partKey) => {
+        const partLessons = lessonsObj[partKey];
+        if (Array.isArray(partLessons)) arr.push(...partLessons);
+      });
+    }
+    return arr;
+  }, [lessonsObj]);
 
-    return (<p className="mt-10 text-center text-white">Course not found!</p>);
-  }
-
+  if (!allLessons.length)
+    return <p className="mt-10 text-center text-white">No lessons found!</p>;
 
   const [currentLessonIndex, setCurrentLessonIndex] = useState(0);
   const [progress, setProgress] = useState(0);
-  const [activeQuiz, setActiveQuiz] = useState([]);     //state that hold current quiz data
+  const [activeQuiz, setActiveQuiz] = useState([]);
+  const [showSidebar, setShowSidebar] = useState(false);
 
-
-  // Load progress from localStorage
+  // Load saved progress
   useEffect(() => {
-    const savedProgress = localStorage.getItem(`progress-${id}`);
-    if (savedProgress) {
-      const { index, progress } = JSON.parse(savedProgress);
-      setCurrentLessonIndex(index);
-      setProgress(progress);
+    const saved = localStorage.getItem(`progress-${id}`);
+    if (saved) {
+      try {
+        const { index = 0 } = JSON.parse(saved);
+        setCurrentLessonIndex(clamp(index, 0, allLessons.length - 1));
+      } catch {}
     }
   }, [id]);
 
-  // Save progress to localStorage
+  // Update progress
   useEffect(() => {
     const percentage = ((currentLessonIndex + 1) / allLessons.length) * 100;
     setProgress(percentage);
@@ -70,374 +79,315 @@ const CourseContent = () => {
     );
   }, [currentLessonIndex, id, allLessons.length]);
 
- 
+  const currentLesson = allLessons[currentLessonIndex] || {};
 
-  const currentLesson = allLessons[currentLessonIndex];
-
-  const handleLessonClick = (lesson, index) => {
-    setCurrentLessonIndex(index);
-  }
-
+  // Quiz load
   useEffect(() => {
-    if (!allLessons || allLessons.length === 0) return;
+    const quizData = class10AIQuizData[currentLesson.id] || [];
+    setActiveQuiz(Array.isArray(quizData) ? quizData : []);
+  }, [currentLesson]);
 
-    const selectedLesson = allLessons[currentLessonIndex];
-    if (selectedLesson) {
-      // ✅ make sure quizData exists for this lesson ID
-      const quizData = class10AIQuizData[selectedLesson.id] || [];
-      setActiveQuiz([...quizData]); // clone to ensure re-render
-    }
-  }, [currentLessonIndex]);
+  const handleLessonClick = (_, index) => setCurrentLessonIndex(index);
+  const handleNext = () =>
+    setCurrentLessonIndex((prev) => clamp(prev + 1, 0, allLessons.length - 1));
+  const handlePrevious = () =>
+    setCurrentLessonIndex((prev) => clamp(prev - 1, 0, allLessons.length - 1));
 
+  const formatTitle = (t = "") =>
+    t.replace(/([a-z])([A-Z])/g, "$1 $2")
+      .split(" ")
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+      .join(" ");
 
-
-  const handleNext = () => {
-      if (currentLessonIndex < allLessons.length - 1) {
-        setCurrentLessonIndex(currentLessonIndex + 1);
-      }
-    };
-
-  const handlePrevious = () => {
-    if (currentLessonIndex > 0) {
-      setCurrentLessonIndex(currentLessonIndex - 1);
-    }
-  };
-
-  const formatTitle = (text) => {
-  // Insert space before capital letters (e.g., numberSystem → number System)
-  const spaced = text.replace(/([a-z])([A-Z])/g, "$1 $2");
-  // Capitalize each word
-  return spaced
-    .split(" ")
-    .map(
-      (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-    )
-    .join(" ");
-};
-
-  
   return (
-    <Box 
+    <Box
       sx={{
         minHeight: "100vh",
-        position: "relative",
         color: "white",
         py: 10,
         background: "linear-gradient(to bottom right, #177E89, #3B5B8C, #533A71)",
       }}
     >
-      {/* Overlay */}
       <Box
         sx={{
-          position: "absolute",
-          inset: 0,
-          bgcolor: "rgba(0,0,0,0.4)",
-          zIndex: 0,
-        }}
-      />
-      
-      {/* Main Content Start From Here  */}
-      <Box 
-        sx={{
-          maxWidth: "1200px", 
-          mx: "auto", 
-          px: { xs: 2, sm: 4 }, 
+          maxWidth: "1200px",
+          mx: "auto",
+          px: { xs: 2, sm: 4 },
           position: "relative",
-          zIndex: 1,
         }}
       >
-          
-         {/* Breadcrumb */}
-        <Breadcrumbs 
-          sx={{color: "gray", mb: 2, fontSize: "0.9rem" }}
-          separator=">"
-        >
-          <Link href="/courses" color="inherit" underline="hover">
+        {/* Breadcrumb */}
+        <Breadcrumbs sx={{ color: "gray", mb: 2, fontSize: "0.9rem" }} separator=">">
+          <Link component={RouterLink} to="/courses" color="inherit" underline="hover">
             Courses
           </Link>
-          
-          <Link 
-            href={`/courses/${course.id}`}
+          <Link
+            component={RouterLink}
+            to={`/courses/${course.id}`}
             underline="hover"
-            sx={{ color: "#A6E1FA"}}
+            sx={{ color: "#A6E1FA" }}
           >
             {course.title}
           </Link>
           <Typography color="#A6E1FA">{currentLesson.title}</Typography>
         </Breadcrumbs>
 
-
         {/* Header */}
-        <Paper 
+        <Paper
           elevation={6}
-          sx={{
-            minWidth: 0,
-            maxWidth: "100%",
-            background: "black",
-            backgroundImage: `url(${course.headImage})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            backgroundRepeat: "no-repeat",
-            WebkitBackdropFilter: "blur(20px) saturate(180%)", // for Safari
-            borderRadius: "20px",
+          sx={{ 
+            minWidth: 0, 
+            maxWidth: "100%", 
+            background: "black", 
+            backgroundImage: `url(${course.headImage})`, 
+            backgroundSize: "cover", 
+            backgroundPosition: "center", 
+            backgroundRepeat: "no-repeat", 
+            WebkitBackdropFilter: "blur(20px) saturate(180%)", 
+            borderRadius: "20px", 
             p: { xs: 2, sm: 4 }, 
-            mb: 6,
-            border: "1px solid rgba(255, 255, 255, 0.2)",
-            color: "white",
-          }}
+            mb: 6, 
+            border: "1px solid rgba(255, 255, 255, 0.2)", 
+            color: "white", }}
         >
           <Typography variant="h4" fontWeight={700}>
             {course.title}
           </Typography>
-          
           <Typography variant="body1" sx={{ color: "gray.300", mb: 3 }}>
             Instructor: {course.instructor || "N/A"}
           </Typography>
-
-          {/* Progress Bar */}
-          <Box sx={{ mb: 1 }}>
-            <LinearProgress
-              variant="determinate"
-              value={progress}
-              sx={{
-                height: 8,
-                borderRadius: 5,
-                backgroundColor: "rgba(255,255,255,0.2)",
-                "& .MuiLinearProgress-bar": {
-                  background:
-                    "linear-gradient(to right, #177E89, #3D5A80, #533A71)",
-                },
-              }}
-            />
-          </Box>
-          
+          <LinearProgress
+            variant="determinate"
+            value={progress}
+            sx={{
+              height: 8,
+              borderRadius: 5,
+              mb: 1,
+              backgroundColor: "rgba(255,255,255,0.2)",
+              "& .MuiLinearProgress-bar": {
+                background:
+                  "linear-gradient(to right, #177E89, #3D5A80, #533A71)",
+              },
+            }}
+          />
           <Typography variant="body2" sx={{ color: "gray.300" }}>
             {Math.round(progress)}% Completed
           </Typography>
         </Paper>
 
-        {/* Main Content */}
-        <Grid container spacing={3} >
-            {/* Left: Video + Notes + Quiz */}
-            <Grid item xs={12} sm={12} md={8} lg={8} sx={{ flexGrow: 1 }}>
-              <Paper
-                elevation={6}
-                sx={{
-                  background: "rgba(255, 255, 255, 0.1)",
-                  backdropFilter: "blur(20px) saturate(180%)",
-                  WebkitBackdropFilter: "blur(20px) saturate(180%)", // for Safari
-                  borderRadius: "20px",
-                  border: "1px solid rgba(255, 255, 255, 0.2)",
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: { xs: 1, md: 4 },
-                  p: { xs: 2, md: 4 },
-                  minWidth: 0,
-                  width: "100%",
-                  maxWidth: "100%",
-                }}
-              >
-                {/* LESSON TITLE  */}
-                <Typography variant="h5" fontWeight={600}>
-                  {currentLesson.title}
-                </Typography>
-              
+        {/* Main layout */}
+        <Box 
+          sx={{ 
+            display: "flex", 
+            position: "relative", 
+            gap: 3 
+          }}
+        >
+          {/* Left Section */}
+          <Box 
+            sx={{ 
+              flex: 1, 
+              position: "relative" 
+            }}
+          >
+            <IconButton
+              onClick={() => setShowSidebar((prev) => !prev)}
+              sx={{
+                position: "absolute",
+                top: 16,
+                right: 16,
+                zIndex: 5,
+                color: "white",
+                backgroundColor: "rgba(255,255,255,0.1)",
+                "&:hover": { backgroundColor: "rgba(255,255,255,0.25)" },
+              }}
+            >
+              {showSidebar ? <CloseIcon /> : <MenuBookIcon />}
+            </IconButton>
 
-                {/* Video or PDF Box */}
+            <Paper
+              elevation={6}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 3,
+                background: "rgba(255, 255, 255, 0.1)",
+                backdropFilter: "blur(20px) saturate(180%)",
+                WebkitBackdropFilter: "blur(20px) saturate(180%)", // for Safari
+                borderRadius: "20px",
+                border: "1px solid rgba(255, 255, 255, 0.2)",
+                p: { xs: 2, sm: 4 },
+              }}
+            >
+              <Typography variant="h5" fontWeight={600}>
+                {currentLesson.title}
+              </Typography>
+
+              {/* PDF or Video */}
+              {currentLesson.video ? (
+                <video
+                  key={currentLesson.video}
+                  src={currentLesson.video}
+                  controls
+                  style={{ width: "100%", borderRadius: 8 }}
+                />
+              ) : currentLesson.pdf ? (
                 <Box
+                  component={motion.div}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.5, ease: "easeInOut" }}
                   sx={{
-                    aspectRatio: currentLesson.video ? "16/9" : undefined,
-                    backgroundColor: "rgba(0,0,0,0.4)",
-                    borderRadius: 2,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: "1.5rem",
-                    minWidth: 0,
                     width: "100%",
-                    maxWidth: "100%",
+                    height: "80vh",
+                    borderRadius: "16px",
+                    overflow: "hidden",
+                    boxShadow: "0 4px 20px rgba(0,0,0,0.4)",
+                    position: "relative",
+                    backgroundColor: "rgba(255,255,255,0.05)",
                   }}
                 >
-                  {currentLesson.video ? (
-                    <video
-                      src={currentLesson.video}
-                      controls
-                      style={{ width: "100%", borderRadius: 8 }}
-                    />
-                  ) : currentLesson.pdf ? (
+                  <ErrorBoundary>
                     <iframe
+                      key={currentLesson.pdf}
                       src={currentLesson.pdf}
-                      title="Lesson PDF"
-                      width="100%"
-                      height="480"
-                      allow="autoplay"
-                      style={{ border: "none", borderRadius: 8 }}
+                      title="PDF Viewer"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        border: "none",
+                        borderRadius: "inherit",
+                      }}
+                      allow="fullscreen"
                     />
-                  ) : (
-                    <Typography variant="body1" sx={{ color: "#fff", textAlign: "center" }}>
-                      No content available for this lesson.
-                    </Typography>
-                  )}
+                  </ErrorBoundary>
                 </Box>
+              ) : (
+                <Typography sx={{ color: "gray.300", textAlign: "center" }}>
+                  No content available for this lesson.
+                </Typography>
+              )}
 
+              {/* Notes */}
+              <Box>
+                <Typography variant="h6" sx={{ color: "#A6E1FA", mb: 1 }}>
+                  📒 Lesson Notes
+                </Typography>
+                <Typography variant="body2" sx={{ color: "gray.300" }}>
+                  {currentLesson.notes || "No notes for this lesson."}
+                </Typography>
+              </Box>
 
-                {/* Notes */}
-                <Box>
+              {/* Quiz */}
+              <Box>
+                <Typography variant="h6" sx={{ color: "#A6E1FA", mb: 1 }}>
+                  🧠 Quick Quiz
+                </Typography>
+                {activeQuiz.length ? (
+                  <Quiz
+                    quizTitle={`Quiz on ${currentLesson.title}`}
+                    questions={activeQuiz}
+                  />
+                ) : (
                   <Typography
-                    variant="h6"
-                    sx={{ 
-                      color: "#A6E1FA", 
-                      fontWeight: 600, 
-                      mb: 1, 
-                      display: "flex", 
-                      alignItems: "center", 
-                      gap: { xs: 1, md: 4 }, 
-                      minWidth: 0,
-                      width: "100%",
-                      maxWidth: "100%",
-                    }}
+                    variant="body2"
+                    sx={{ color: "gray.400", textAlign: "center", py: 2 }}
                   >
-                    📒 Lesson Notes <IoPlayCircleOutline />
+                    🔒 Select a lesson to start its quiz.
                   </Typography>
-                  <Typography variant="body2" sx={{ color: "gray.300"}}>
-                    {currentLesson.notes}
-                  </Typography>
-                </Box>
+                )}
+              </Box>
 
-                {/* Quiz */}
-                <Box>
-                  <Typography
-                    variant="h6"
-                    sx={{ 
-                      color: "#A6E1FA", 
-                      fontWeight: 600, 
-                      mb: 1, 
-                      display: "flex", 
-                      alignItems: "center", 
-                      gap: { xs: 1, md: 4 },
-                      minWidth: 0,
-                      width: "100%",
-                      maxWidth: "100%",
-                    }}
-                  >
-                    🧠 Quick Quiz <IoPlayCircleOutline />
-                  </Typography>
-
-                  {activeQuiz && activeQuiz.length > 0 ? (
-                    <Quiz
-                      quizTitle={`Quiz on ${currentLesson.title}`}
-                      questions={activeQuiz}
-                      key={currentLesson.id}   //force re-render when lesson changes
-                    />
-                  ) : (
-                    <div className="py-6 italic text-center text-gray-400">
-                      🔒 Select a lesson to start its quiz.
-                    </div>
-                  )}
-                </Box>
-
-                  {/* Navigation Buttons  */}
-                <Box 
+              {/* Navigation */}
+              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                <Button
+                  variant="contained"
+                  onClick={handlePrevious}
+                  disabled={currentLessonIndex === 0}
                   sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    minWidth: 0,
-                    width: "100%",
-                    maxWidth: "100%",
+                    backgroundColor: "rgba(255,255,255,0.2)",
+                    color: "white",
+                    "&:hover": { backgroundColor: "rgba(255,255,255,0.3)" },
                   }}
                 >
-                  {/* Previous Button */}
-                  <Button
-                    variant="contained"
-                    onClick={handlePrevious}
-                    disabled={currentLessonIndex === 0}
-                    sx={{
-                      backgroundColor: "rgba(255,255,255,0.2)",
-                      color: "white",
-                      "&:hover": {
-                        backgroundColor: "rgba(255,255,255,0.3)",
-                      },
-                    }}
-                  >
-                    ⬅ Previous
-                  </Button>
+                  ⬅ Previous
+                </Button>
+                <Button
+                  variant="contained"
+                  onClick={handleNext}
+                  disabled={currentLessonIndex === allLessons.length - 1}
+                  sx={{
+                    background:
+                      "linear-gradient(to right, #177E89, #3D5A80, #533A71)",
+                    color: "white",
+                    "&:hover": { opacity: 0.9 },
+                  }}
+                >
+                  Next ➡
+                </Button>
+              </Box>
+            </Paper>
+          </Box>
 
-                  {/* Next Button */}
-                  <Button
-                    variant="contained"
-                    onClick={handleNext}
-                    disabled={currentLessonIndex === allLessons.length - 1}
-                    sx={{
-                      background: "linear-gradient(to right, #177E89, #3D5A80, #533A71)",
-                      color: "white",
-                      "&:hover": {
-                        opacity: 0.9,
-                      },
-                    }}
-                  >
-                    Next ➡
-                  </Button>
-                </Box>
-              </Paper>
-            </Grid>
-            
-            {/* Right: Lesson List */}
-            <Grid item xs={12} sm={12} md={4} lg={4}>
-              <Paper
-                elevation={6}
-                sx={{
-                  background: "rgba(255, 255, 255, 0.1)",
-                  backdropFilter: "blur(20px) saturate(180%)",
-                  WebkitBackdropFilter: "blur(20px) saturate(180%)", // Safari
-                  borderRadius: "20px",
-                  border: "1px solid rgba(255, 255, 255, 0.2)",
-                  boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.37)",
-                  display: "flex",
-                  flexDirection: "column",
-                  p: { xs: 2, md: 4 },
-                  minWidth: 0,
-                  width: "100%",
-                  maxWidth: "100%",
+          {/* Right Sidebar */}
+          <AnimatePresence>
+            {showSidebar && (
+              <motion.div
+                key="sidebar"
+                initial={{ x: "100%", opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: "100%", opacity: 0 }}
+                transition={{ duration: 0.4, ease: "easeInOut" }}
+                style={{
+                  position: "absolute",
+                  right: 0,
+                  top: 0,
+                  bottom: 0,
+                  width: "350px",
+                  zIndex: 4,
                 }}
               >
-                <Typography 
-                  variant="h6" 
-                  fontWeight={600} 
-                  mb={2} 
-                  sx={{ color: "#A6E1FA" }}
+                <Paper
+                  elevation={6}
+                  sx={{
+                    height: "100%",
+                    background: "linear-gradient(to bottom, rgba(23,126,137,0.85), rgba(61,90,128,0.75), rgba(83,58,113,0.85))",
+                    backdropFilter: "blur(20px)",
+                    borderRadius: "20px 0 0 20px",
+                    p: 3,
+                    overflowY: "auto",
+                  }}
                 >
-                  📚 Course Lessons
-                </Typography>
-
-                {/* Loop over parts dynamically */}
-                {lessons &&
-                  Object.keys(lessons).map((partKey) => {
-                    const partLessons = lessons[partKey];
-                    if (!partLessons || !partLessons.length) return null;
-
+                  <Typography variant="h6" sx={{ color: "#A6E1FA", mb: 2 }}>
+                    📚 Course Lessons
+                  </Typography>
+                  {Object.keys(lessonsObj).map((partKey) => {
+                    const partLessons = lessonsObj[partKey];
+                    if (!Array.isArray(partLessons) || !partLessons.length)
+                      return null;
                     return (
                       <Box key={partKey} sx={{ mb: 2 }}>
-                        {/* Part Title */}
                         <Typography
                           variant="subtitle1"
-                          sx={{ 
-                            color: "gray.100", 
-                            fontWeight: 500, 
+                          sx={{
+                            color: "gray.100",
                             mb: 1,
                             display: "flex",
-                            justifyContent: "start",
                             alignItems: "center",
-                            gap: 3, 
+                            gap: 2,
                           }}
                         >
                           {!partKey.toLowerCase().includes("chapter")
-                          ? `Chapter: ${formatTitle(partKey)}`
-                          : partKey.replace(/part/i, "Part ")}<IoPlayCircleOutline />
+                            ? `Chapter: ${formatTitle(partKey)}`
+                            : partKey.replace(/part/i, "Part ")}
+                          <IoPlayCircleOutline />
                         </Typography>
 
-                        {/* Lessons inside the part */}
                         {partLessons.map((lesson) => {
-                          const lessonIndex = allLessons.findIndex((l) => l.id === lesson.id);
+                          const lessonIndex = allLessons.findIndex(
+                            (l) => l.id === lesson.id
+                          );
                           return (
                             <Accordion
                               key={lesson.id}
@@ -452,10 +402,14 @@ const CourseContent = () => {
                                 borderRadius: 2,
                                 mb: 1,
                                 "&:before": { display: "none" },
-                                "&:hover": { backgroundColor: "rgba(255,255,255,0.08)" },
+                                "&:hover": {
+                                  backgroundColor: "rgba(255,255,255,0.08)",
+                                },
                               }}
                             >
-                              <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: "white" }} />}>
+                              <AccordionSummary
+                                expandIcon={<ExpandMoreIcon sx={{ color: "white" }} />}
+                              >
                                 <Typography>
                                   {lessonIndex + 1}. {lesson.title}
                                 </Typography>
@@ -465,7 +419,8 @@ const CourseContent = () => {
                                   variant="body2"
                                   sx={{ color: "gray.300", lineHeight: 1.6 }}
                                 >
-                                  {lesson.description || "Click to view lesson content."}
+                                  {lesson.description ||
+                                    "Click to view lesson content."}
                                 </Typography>
                               </AccordionDetails>
                             </Accordion>
@@ -474,9 +429,11 @@ const CourseContent = () => {
                       </Box>
                     );
                   })}
-              </Paper>
-            </Grid>
-        </Grid>
+                </Paper>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </Box>
       </Box>
     </Box>
   );

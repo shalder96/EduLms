@@ -7,7 +7,7 @@ import Layout from './Layout'
 import { Route, RouterProvider, createBrowserRouter, createRoutesFromElements } from 'react-router-dom'
 
 import Loading from './components/loader/Loading'
-import ErrorPage from './components/ErrorPage'
+import ErrorBoundary from './components/ErrorBoundary'
 
 
 const Home = lazy(() => import('./pages/Home'))
@@ -29,7 +29,7 @@ const router = createBrowserRouter(
         <Route path='contact' element={<Contact />} />
         <Route path='dashboard' element={<Dashboard />} />
       </Route>
-      <Route path='*' element={<ErrorPage />} />
+      <Route path='*' element={<ErrorBoundary />} />
     </>
   )
 )

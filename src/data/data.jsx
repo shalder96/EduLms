@@ -438,9 +438,9 @@ export const coursesData = [
         {
           id: "mock2",
           title: "Mock Test - 2",
-          video: "🎬 Communication Video",
-          pdf: "",
-          notes: "",
+          video: "",
+          pdf: "https://drive.google.com/file/d/1Ya-d_lovOG66-feugDke0sBznAW4R-r_/preview",
+          notes: "Topic covered in this test - Profit & Loss, Percent & Percentage, Discount, and GST, Simple and Compound Interest",
         },
         {
           id: "mock3",

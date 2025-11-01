@@ -1,9 +1,32 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {Link, NavLink} from 'react-router-dom'
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const lastScrollY = useRef(0);
+  
+  useEffect(() => {
+    const handleScroll = () => {
+      // prevents small scroll jitters
+      if (Math.abs(window.scrollY - lastScrollY.current) < 5) return;
+      
+      // always show navbar when near top
+      if (window.scrollY > lastScrollY.current) {
+        // scrolling down → hide navbar
+        setIsVisible(false);
+      } else {
+        // scrolling up → show navbar
+        setIsVisible(true);
+      }
+      //Update last scroll position at the end
+      lastScrollY.current = window.scrollY;
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+  
   const menuItems = [
   { name: "Home", path: "/" },
   { name: "Courses", path: "/courses" },
@@ -12,15 +35,15 @@ const Navbar = () => {
 ];
 
   return (
-    <nav className="bg-gradient-to-r from-[#177E89] via-[#3B5B8C] to-[#533A71] text-white shadow-lg fixed w-full z-50">
-      <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+    <nav className={`bg-gradient-to-r from-[#177E89] via-[#3B5B8C] to-[#533A71] text-white shadow-lg fixed top-0 transition-transform duration-300 w-full z-50 ${isVisible ? 'translate-y-0' : '-translate-y-full'}`}>
+      <div className="flex items-center justify-between px-6 py-4 mx-auto max-w-7xl">
         {/* Logo / Brand */}
         <h1 className="text-2xl font-bold tracking-wide">
           Edu<span className="text-[#A6E1FA]">LMS</span>
         </h1>
 
         {/* Desktop Menu */}
-        <ul className="hidden md:flex space-x-8 text-lg">
+        <ul className="hidden space-x-8 text-lg md:flex">
           {menuItems.map((item) => (
           <li key={item.name}>
             <NavLink

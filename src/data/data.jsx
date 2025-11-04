@@ -445,9 +445,9 @@ export const coursesData = [
         {
           id: "mock3",
           title: "Mock Test - 3",
-          video: "🎬 Communication Video",
-          pdf: "",
-          notes: "",
+          video: "",
+          pdf: "https://drive.google.com/file/d/1DCuVGfjD3Gf_t6m9F3Z6zOJS69koSU2l/preview",
+          notes: "Topic covered in this test - Profit & Loss, Percent & Percentage, Discount, and GST, Simple and Compound Interest, Representing 3D in 2D",
         },
       ],
     }
@@ -512,7 +512,6 @@ export const subjects = [
   "Mathematics", 
   "Science", 
   "Social Studies",
-
 ];
 
 export const boards = [

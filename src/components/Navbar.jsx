@@ -93,7 +93,7 @@ const Navbar = () => {
       <AnimatePresence>
         {open && (
           <motion.div
-            className="fixed inset-0 bg-gradient-to-b from-[#177E89]/95 via-[#3B5B8C]/95 to-[#533A71]/95 backdrop-blur-lg flex flex-col justify-center items-center space-y-10 text-2xl font-semibold"
+            className="fixed inset-0 bg-gradient-to-b from-[#177E89]/95 via-[#3B5B8C]/95 to-[#533A71]/95 backdrop-blur-lg flex flex-col justify-center items-center space-y-10 text-2xl font-semibold h-screen"
             initial={{ opacity: 0, y: -30 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -30 }}

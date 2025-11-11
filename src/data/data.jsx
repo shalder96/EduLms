@@ -1,6 +1,7 @@
 import { FaChalkboardTeacher, FaLaptopCode, FaCertificate } from "react-icons/fa";
 import AIImage from "../assets/AIImage.png"
 import mathImage from "../assets/mathImage.png"
+import CAImage from "../assets/CAImage.png"
 
 
 export const cards = [
@@ -453,37 +454,97 @@ export const coursesData = [
     }
       
   },
-  {
-    id: "node",
-    title: "Node.js & Express",
-    description: "Build backend APIs with Node.js and Express.",
-    instructor: "Emily Brown",
-    image: "https://cdn-icons-png.flaticon.com/512/919/919825.png",
-    class: "",
-    subject: "",
-    board: "",
-    lessons: [
-      {
-        title: "Introduction to Node.js",
-        video: "🎬 Node.js Intro Video",
-        notes: "Learn about Node.js runtime and setup.",
-      },
-      {
-        title: "Express Basics",
-        video: "🎬 Express Video",
-        notes: "Build your first Express server and routes.",
-      },
-      {
-        title: "Working with APIs",
-        video: "🎬 API Video",
-        notes: "Create and consume RESTful APIs using Node.js and Express.",
-      },
-      {
-        title: "Database Integration",
-        video: "🎬 Database Video",
-        notes: "Connect your Node.js app with a database (MongoDB/MySQL).",
-      },
-    ],
+  { //ICSE class 9 Computer Application
+    id: "icse_class9_CA",
+    title: "Computer Application",
+    headImage: `${CAImage}`,
+    description: "Excel your 9th standard examination and strenghten your Java language understanding",
+    introduction: `A Computer Application is a software program designed to perform specific tasks for users on a computer or digital device. These tasks can range from basic functions like writing documents and managing data to complex activities such as graphic design, programming, or online communication.
+    Computer applications make work easier, faster, and more efficient in fields like education, business, healthcare, and entertainment. Examples include Microsoft Word, Excel, Photoshop, and web browsers. In simple terms, computer applications are tools that help people use technology to solve problems and achieve goals effectively.`,
+    instructor: "NA",
+    image: "https://m.media-amazon.com/images/I/61K7o8T4tsL._SY425_.jpg",
+    class: "Class 9",
+    subject: "Computer Application",
+    board: "ICSE",
+    lessons: {
+      java: [
+        {
+          id: "OOPs_Intro",
+          title: "Introduction to Object-Oriented Programming Concepts",
+          video: "🎬 Communication Video",
+          pdf: "",
+          notes: "",
+        }, 
+        {
+          id: "concept_in_java",
+          title: "Elementary Concept of Java",
+          video: "🎬 Communication Video",
+          pdf: "",
+          notes: "",
+        }, 
+        {
+          id: "input_in_java",
+          title: "Input in Java",
+          video: "🎬 Communication Video",
+          pdf: "",
+          notes: "",
+        }, 
+        {
+          id: "mathLibrary",
+          title: "Mathematical Library Methods",
+          video: "🎬 Communication Video",
+          pdf: "",
+          notes: "",
+        }, 
+        {
+          id: "conditional-construct",
+          title: "Conditional Constructs in Java",
+          video: "🎬 Communication Video",
+          pdf: "",
+          notes: "",
+        }, 
+        {
+          id: "iterative-construct",
+          title: "Iterative Constructs in Java",
+          video: "🎬 Communication Video",
+          pdf: "",
+          notes: "",
+        }, 
+        {
+          id: "nested_loops",
+          title: "Nested Loops",
+          video: "🎬 Communication Video",
+          pdf: "",
+          notes: "",
+        }, 
+        {
+          id: "arrays_programming",
+          title: "Programming with Arrays (Linear Arrays)",
+          video: "🎬 Communication Video",
+          pdf: "",
+          notes: "",
+        }, 
+        {
+          id: "function",
+          title: "Functions",
+          video: "🎬 Communication Video",
+          pdf: "",
+          notes: "",
+        }, 
+      ],
+      notes: [
+        {
+          id: "notes",
+          title: "Complete Notes",
+          video: "",
+          pdf: "https://drive.google.com/file/d/1dD4piHN-h995YpKq1In4Q2cyvkxxQddF/preview",
+          notes: "",
+        },
+      ],
+      mockTests: [],
+    }
+  
+    
   },
 ];
 

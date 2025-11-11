@@ -467,14 +467,16 @@ export const coursesData = [
     subject: "Computer Application",
     board: "ICSE",
     lessons: {
-      java: [
+      oops: [
         {
           id: "OOPs_Intro",
           title: "Introduction to Object-Oriented Programming Concepts",
           video: "🎬 Communication Video",
           pdf: "",
           notes: "",
-        }, 
+        },
+      ],
+      java: [ 
         {
           id: "concept_in_java",
           title: "Elementary Concept of Java",
@@ -543,8 +545,6 @@ export const coursesData = [
       ],
       mockTests: [],
     }
-  
-    
   },
 ];
 
